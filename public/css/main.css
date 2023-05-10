@@ -1,0 +1,295 @@
+body {
+  background: #f1f1f1;
+}
+/*#app {
+        min-height: 100vh;
+    }
+*/
+
+
+
+.theme--light.v-data-table {
+  background: transparent !important;
+}
+#main {
+  background: #f1f1f1;
+}  
+.box-auctions {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.theme--light.v-data-table {
+  background: transparent !important;
+}
+#main {
+  background: #f1f1f1;
+}
+.header-main-box {
+  border: 1px solid #ccc;
+  background: transparent !important;
+}
+.counter { font-size: 14px; }
+@media all and (max-width: 767px) {
+    .counter { font-size: 13px; }
+}
+@media all and (max-width: 599px) {
+    .counter { font-size: 12px; }
+    .title-nats { font-size: 200%; }
+}
+@media all and (max-width: 498px) {
+    .title-nats { font-size: 175%; }
+    .counter { font-size: 11px; }
+}
+.rekl-title-box {
+  text-align: center;
+}
+
+.rekl-title {
+  padding: 60px 0 0 0;
+  text-transform: uppercase;
+}
+
+.tender-box {
+  margin: 40px 60px 20px 60px;
+}
+.tenders_block{
+  padding: 100px;
+}
+
+.tender-box .tender-box-btn {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin:  0 auto;
+  color: #fff ;
+  padding: 25px 40px;
+   background: url('/img/main-page/button-green.png') no-repeat center center; 
+   background-size: cover;  
+  font-size: 26px;
+  line-height: 30px;
+  text-transform: uppercase;
+  font-weight: bold;
+  border-radius: 25px;
+  text-align: center;
+  text-decoration: none;
+ box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.tender-box .tender-box-btn:hover {
+   box-shadow: 0 14px 28px rgba(255,255,255,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+
+.tender-box-title {
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0 0 20px 0;
+}
+.tender-box .tender-box-link {
+  color: #fff;
+  display: block;
+  text-decoration: none;
+}
+
+@media all and (max-width: 1400px) {
+.tender-box {
+    margin: 40px 10px 20px 10px;
+}
+}
+
+@media all and (max-width: 767px) {
+  .tenders_block{
+  padding:20px;
+}
+.tender-box {
+   margin: 0px 20px 0 20px;
+}
+  .tender-box .tender-box-btn {
+  padding: 20px 20px;
+  font-size: 20px;
+  line-height: 20px;
+  border-radius: 20px;
+}
+}
+.last-title {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 2.5rem;
+    letter-spacing: 0.0073529412em;
+    font-family: "Roboto", sans-serif;
+}
+.price-title {
+font-size: 24px; line-height: 32px; zoom: 1;
+}
+.mat-title {
+font-size: 16px; line-height: 20px; color: #065894;  
+}
+@media all and (max-width: 1400px) {
+.mat-title {
+font-size: 14px;
+}
+}
+
+
+@media all and (max-width: 767px) {
+.last-title {
+font-size: 25px;
+}
+}
+@media all and (max-width: 767px) {
+.news-title {
+font-size: 26px;
+}
+}
+.brend-title {
+    font-size: 30px;
+    text-align: center;
+}
+
+@media all and (max-width: 767px) {
+.brend-title {
+font-size: 20px;
+}
+}
+
+
+.img-banner {
+  width: 100%;
+  border: 1px solid #cccccc; 
+  border-radius: 4px;
+}
+.banner-form-box {
+    width: 100%;
+  border: 1px solid #cccccc; 
+  border-radius: 4px;
+}
+.banner-form-box-title {
+    text-align: center;
+    font-size: 25px;
+    padding: 20px 20px;
+}
+.banner-form-box-button {
+    text-align: center;
+    padding: 0 0 30px 0;
+}
+.sidebar-box-title {
+    background: green;  
+}
+.rek-title {
+    background: green;
+    color: #fff;
+    display: block;
+    font-size: 18px;
+    line-height: 18px;
+    display: block;
+    text-align: center;
+    padding: 20px 5px;
+    text-transform: uppercase;
+    border-radius: 10px;
+    margin: 0 8px;
+}
+
+
+.img-brend {
+border: 1px solid #cccccc; border-radius: 4px;
+}
+
+
+/*
+.theme--light.v-data-table {
+  background: transparent !important;
+}
+#main {
+  background: #f1f1f1;
+}
+*/
+
+
+  /* Подвал */
+  .page-footer {
+    font-size: 14px;
+  }
+  .page-footer .page-footer-inner {
+    color: #CCCCCB;
+  }
+  .page-footer small {
+    font-size: 80%;
+  }
+  .page-footer h3 {
+    margin-top: 0px;
+  }
+  .page-footer h3 a {
+    color: #ffffff !important;
+    text-decoration: none;
+  }
+  .page-footer-social {
+    float:  left;
+    margin:  0 80px 0 0;
+    padding:  5px 0 0 0;
+  }
+  .page-footer-mobile {
+    float:  left;
+    padding:  8px 0 0 0;
+  }
+    .page-footer-mobile-link img {
+      margin-right: 5px;
+    }
+   .page-footer-social-link, .page-footer-social-link:hover, 
+  .page-footer-social-link:active, .page-footer-social-link:focus {
+    text-decoration: none;
+  }
+  .page-footer-icons {
+    overflow: hidden;
+    padding:  10px 0 0 0;
+  }
+
+
+
+
+
+  /* Глобально */
+  body, h1, h2, h3, h4, h5, h6 {
+    font-family: "Open Sans",sans-serif;
+  }
+
+  /* Топ-шапка */
+  .nav {
+    font-size: 16px;
+  }
+  .navbar-default .navbar-nav > li > a.active {
+    color: #000;
+  }
+
+.label {
+  color: #999;
+  font-weight: 400;
+}
+
+.btn-success {
+  background-color: #4caf50 !important;
+  border-color:#4caf50 !important;
+}
+
+.red-btn {
+  background-color: #ff5252 !important;
+  border-color: #ff5252 !important;
+  color: #fff !important;
+}
+
+.more-btn {
+   color: #7cb342;
+}
+
+.swiper-slide-title {
+color: #7cb342;
+line-height: 1.2;
+}
+
+.swiper-slide-text {
+  width: auto !important;
+}
+
+.title-nats {
+  padding: 0.5em 36px 0.75em; width: 100%; font-weight: bold; text-shadow: rgb(0, 0, 0) 0px 2px 35px;
+}

@@ -1,0 +1,26 @@
+{
+    "name": "mirronix/logglobal",
+    "description": "Global log for Eqoquent models' changes",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+    },
+    "authors": [
+        {
+            "name": "Givi Chopikashvili",
+            "email": "jager@djem.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Mirronix\\LogGlobal\\": "./"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mirronix\\LogGlobal\\ServiceProvider"
+            ]
+        }
+    }
+}

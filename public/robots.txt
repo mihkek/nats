@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /login
+Disallow: /registration
+Disallow: /thanksforregistration
+Disallow: /login?reminded
+Disallow: /thanksforsupplier
+Disallow: /login?confirmed
+Disallow: /login?needconfirm
+Disallow: /login?needconfirmsms
+Host: https://agtender.com
+Sitemap: https://agtender.com/sitemap

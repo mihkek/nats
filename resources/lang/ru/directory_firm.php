@@ -1,0 +1,27 @@
+<?php
+
+return [
+  'full_name' => 'Полное имя',
+  'latest_lesson' => 'Крайнее занятие',
+  'photo' => 'Фотография профиля',
+  'phone' => 'Телефон',
+  'name' => 'Наименование объекта',
+  'city' => 'Город',
+  'metro' => 'Метро',
+  'address' => 'Адрес',
+  'email' => 'Email',
+  'requisites' => 'Реквезиты',
+  'user' => 'Пользователь',
+  'price' => 'Цена',
+  'person_full_name' => 'Полное имя персоны',
+  'person_position' => 'Должность',
+  'person_phone' => 'Телефон',
+  'person_email' => 'Email',
+  'person_new' => 'Новая персона',
+  'busy' => 'Недоступен',
+  'rent' => 'Аренда',
+  'rent_title' => 'Стоимость аренды',
+  'title' => 'Наименование',
+  'type' => 'Тип объекта',
+  'subdivision' => 'Подразделение',
+];

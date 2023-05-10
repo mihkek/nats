@@ -1,0 +1,26 @@
+{
+    "name": "mirronix/fieldaccess",
+    "description": "Field access provider",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+    },
+    "authors": [
+        {
+            "name": "Givi Chopikashvili",
+            "email": "jager@djem.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Mirronix\\FieldAccess\\": "./"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mirronix\\FieldAccess\\ServiceProvider"
+            ]
+        }
+    }
+}

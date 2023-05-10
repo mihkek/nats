@@ -1,0 +1,26 @@
+{
+    "name": "mirronix/translationmanager",
+    "description": "Translation manager",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+    },
+    "authors": [
+        {
+            "name": "Givi Chopikashvili",
+            "email": "jager@djem.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Mirronix\\TranslationManager\\": "./"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mirronix\\TranslationManager\\ServiceProvider"
+            ]
+        }
+    }
+}

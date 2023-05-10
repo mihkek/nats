@@ -1,0 +1,166 @@
+#create .v-speed-dial {
+    position: fixed;
+    bottom: 65px;
+}
+.v-stepper__step__step {
+	border-radius: 50% !important;
+}
+#create .v-btn--floating {
+  position: relative;
+}
+
+#app {
+	p {
+		font-weight: 500;
+	}
+	.v-application--wrap {
+		min-height: auto !important;
+	}
+}
+.clickable_table {
+	tbody {
+		tr {
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+}
+#app {
+	background: #f1f1f1 !important;
+}
+#vue_block {
+	background: #f1f1f1 !important;
+}
+.theme--light.v-application {
+	background: transparent !important;
+}
+.inline-block {
+	display: inline-block !important;
+}
+.rounded-card {
+	border-radius: 18px !important;
+}
+.cardform-list-item {
+	border-right: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+}
+.my-icon-btn {
+	border-radius: 50% !important;
+	&:hover {
+		text-decoration: none !important;
+	}
+}
+.form-control {
+	border-radius: 4px !important;
+}
+.v-data-footer {
+	border-bottom-right-radius: inherit !important;
+	border-bottom-left-radius: inherit !important;
+}
+.v-calendar-weekly__day-label {
+	.v-btn--round {
+		margin-bottom: 5px;
+	}
+}
+.v-btn--round {
+	border-radius: 50% !important;
+}
+.avatar {
+	color: #fff !important;
+	border-radius: 50% !important;
+}
+
+thead {
+	background: #fafafa;
+}
+.v-data-footer {
+	background: #fafafa;
+}
+.v-application--is-ltr .v-badge__badge {
+	border-radius: 50% !important;
+}
+.v-toolbar__content {
+}
+.card-label {
+	max-width: 250px;
+}
+.rounded-btn {
+	border-radius: 24px !important;
+}
+.mask-input {
+	height: 38px;
+	width: 100%;
+	background: #fff;
+	padding: 0 12px;
+	color: #171717;
+	font-size: 16px;
+	&:focus {
+  		outline: none;
+	}
+}
+.list-group {
+	padding-left: 0;
+}
+.table-row {
+	cursor: pointer;
+}
+
+.dialog-datatable {
+	tbody {
+		tr {
+			cursor: pointer;
+		}
+	}
+}
+.profile-avatar {
+	border-radius: 50% !important;
+	image {
+		border-radius: 50% !important;
+	}
+}
+.v-avatar .v-image {
+	border-radius: 50% !important;
+}
+
+/* Круглые выравнивающиеся аватарки в табличках */
+td.ava img {
+	max-width:30px;
+	max-height:30px;
+	border-radius:50%!important;
+	margin:2px 6px 0 0;
+}
+td.ava div {
+	vertical-align: middle;
+	display:table-cell;
+}
+.table td, .table th {
+	vertical-align: middle!important;
+}
+a.v-btn:hover {
+	text-decoration: none !important;
+}
+
+.empty {
+	background: #ffeb3b;
+	color: #F44336;
+	text-transform: uppercase;
+}
+
+.no_translate {
+	color: red;
+	background: yellow;
+	text-transform: uppercase;
+	font-size: 10px;
+}
+.radius {
+	border-radius: 18px !important;
+}
+.outlined-textfield {
+	border: 1px solid #ddd !important;
+	.v-input__prepend-outer {
+		padding: 7px;
+		margin: 0 !important;
+		background: #fff;
+	}
+}
