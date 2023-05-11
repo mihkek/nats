@@ -40,64 +40,63 @@ class AuctionController extends Controller
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     // ссылка на карточку
-    static function getLinkCard($auction_type, $auction_id)
-    {
+    static function getLinkCard($auction_type, $auction_id) {       
         $link_card = "";
         if ($auction_type === 'rise') {
-            $link_card = 'https://agtender.com/admin/auction/now/card/' . $auction_id;
+           $link_card = 'https://agtender.com/admin/auction/now/card/' . $auction_id;
         }
         if ($auction_type === 'drop') {
-            $link_card = 'https://agtender.com/admin/tender/now/card/' . $auction_id;
+           $link_card = 'https://agtender.com/admin/tender/now/card/' . $auction_id;
         }
         if ($auction_type === 'dropdv') {
-            $link_card = 'https://agtender.com/admin/tenderdv/now/card/' . $auction_id;
+           $link_card = 'https://agtender.com/admin/tenderdv/now/card/' . $auction_id;
         }
         if ($auction_type === 'sale') {
-            $link_card = 'https://agtender.com/admin/sale/now/card/' . $auction_id;
+           $link_card = 'https://agtender.com/admin/sale/now/card/' . $auction_id;
         }
         return $link_card;
     }
 
-    public function firebase_push_send($user, $auction_type, $firebase_text, $auctionId)
-    {
+    public function firebase_push_send($user, $auction_type, $firebase_text) {
         $firebase_title = "НАТС Тендеры";
         $firebase_token = $user->firebase_token;
-        if (isset($user->firebase_token) && !empty($firebase_token) && ($auction_type === "drop")) {
-            $firebase_key = "AAAA8YW6Ths:APA91bHMAQYsCeehzLtkfrPznUKL1Cqdt38zTtUutwesuJXQTTmxvh7V6n1H156kTBkAbT3K8h-frGVNEA0WrKcJKioh8BMHrrVV9ODkXS110r7iN0GwY6MNrq6PT1lWi-pXR6Y7MfNA";
-            $firebase_url = 'https://fcm.googleapis.com/fcm/send';
-            $fields = array(
-                'to' => $firebase_token,
-                'notification' => array(
-                    "title" => $firebase_title,
-                    "body" => $firebase_text,
-                    "badge" => 1,
-                ),
-                'data' => array(
-//                    "tender_id" => "'" . $auctionId . "'"
-                    "tender_id" => strval($auctionId)
-                ),
-            );
-            $fields = json_encode($fields);
-            $headers = array(
-                'Authorization: key=' . $firebase_key,
-                'Content-Type: application/json'
-            );
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $firebase_url);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-            $result = curl_exec($ch);
-            //echo $result;
-            curl_close($ch);
+        if (isset($user->firebase_token) && !empty($firebase_token) && ($auction_type === "drop")) {          
+        $firebase_key = "AAAA8YW6Ths:APA91bHMAQYsCeehzLtkfrPznUKL1Cqdt38zTtUutwesuJXQTTmxvh7V6n1H156kTBkAbT3K8h-frGVNEA0WrKcJKioh8BMHrrVV9ODkXS110r7iN0GwY6MNrq6PT1lWi-pXR6Y7MfNA";
+        $firebase_url = 'https://fcm.googleapis.com/fcm/send';
+        $fields = array (
+            'to' => $firebase_token,
+            'notification' => array (
+                "title" =>  $firebase_title,
+                "body" => $firebase_text,
+                "badge" => 1,
+            ),
+        );
+        $fields = json_encode($fields);
+        $headers = array (
+            'Authorization: key=' . $firebase_key,
+            'Content-Type: application/json'
+        );
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $firebase_url );
+        curl_setopt ( $ch, CURLOPT_POST, true );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields );
+        $result = curl_exec ( $ch );
+        //echo $result;
+        curl_close ( $ch );
         }
     }
 
 
+
+
+
+
+
+
     // Mobile Api Список тендеров (для неавторизованных)
-    public function get_auctions(Request $request)
-    {
+    public function get_auctions(Request $request) {
         $user = User::find($request->user_id);
 
         $now = date('Y-m-d H:i:s');
@@ -155,7 +154,7 @@ class AuctionController extends Controller
             $regions = $request->region;
             $auctions->where(function ($query) use ($regions) {
                 foreach ($regions as $region) {
-                    $query->orWhere('delivery_region', 'like', '%' . $region . '%');
+                    $query->orWhere('delivery_region','like','%'.$region.'%');
                 }
             });
         }
@@ -163,7 +162,7 @@ class AuctionController extends Controller
 
         if (!empty($user)) {
             if ($request->own == true) {
-                $auctions->where('user_id', $user->id);
+                $auctions->where('user_id', $user->id);                
             }
         }
 
@@ -176,7 +175,6 @@ class AuctionController extends Controller
             $datediff = $date - $now;
 
             $auction->datediff = floor($datediff / (60 * 60 * 24));
-            $auction->timeiff = floor(($datediff / (60 * 60)) - $auction->datediff * 24);
             $auction->created = date('d.m.y H:i', strtotime($auction->created_at));
             $auction->date_formated = date('d.m.y', strtotime($auction->over_date));
             $auction->delivery_date_formated = date('d.m.y', strtotime($auction->delivery_date));
@@ -215,12 +213,13 @@ class AuctionController extends Controller
 
     //страница тендера
     public function get_auction_page(Request $request)
-    {
+    {        
 
         $auction = Auction::where('id', $request->id)->first();
-
-
+       
+        
         if (!empty($auction)) {
+
 
 
             $now = time();
@@ -238,10 +237,10 @@ class AuctionController extends Controller
             $auction_user = DB::table('users')->where('id', $auction->user_id)->first();
             if (!empty($auction_user)) {
                 if (!empty($auction_user->company_check_file)) {
-                    $auction_user->company_check_file_link = "https://agtender.com/storage/proofs/" . $auction_user->company_check_file;
+                    $auction_user->company_check_file_link = "https://agtender.com/storage/proofs/".$auction_user->company_check_file;
                 } else {
                     $auction_user->company_check_file_link = NULL;
-                }
+                }   
             }
             $rate = 0;
             if ($auction->type == 'rise') {
@@ -257,14 +256,19 @@ class AuctionController extends Controller
             );
         } else {
             $res = array(
-                'auction' => NULL,
-                'rate' => NULL,
-                'user' => NULL,
+            'auction' => NULL,
+            'rate' => NULL,
+            'user' => NULL,
             );
         }
 
         return response(['status' => 1, 'item' => $res], 200);
     }
+
+
+
+
+
 
 
     public function add_rate(Request $request)
@@ -314,27 +318,27 @@ class AuctionController extends Controller
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
         // ОТПРАВКА НА ПОЧТУ УВЕДОМЛЕНИЯ
-        if ($auction_user->notification_off === NULL) {
-            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-            $mail->to($auction_user->email);
-            Mail::send($mail);
-            self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере " . $auction->id, $auction->id);
+        if($auction_user->notification_off === NULL) {
+        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+        $mail->to($auction_user->email);
+        Mail::send($mail);
+        self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере ".$auction->id);
         }
 
-        if ($rate_user->notification_off === NULL) {
-            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-            $mail->to($rate_user->email);
-            Mail::send($mail);
-            self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере " . $auction->id, $auction->id);
+        if($rate_user->notification_off === NULL) {
+        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+        $mail->to($rate_user->email);
+        Mail::send($mail);
+        self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере ".$auction->id);
         }
 
         if (!empty($last_rate)) {
-
+            
             $last_rate_user = User::find($last_rate->user_id);
-            if ($last_rate_user->notification_off === NULL) {
-                $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-                $mail->to($last_rate_user->email);
-                Mail::send($mail);
+            if($last_rate_user->notification_off === NULL) {
+            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+            $mail->to($last_rate_user->email);
+            Mail::send($mail);
             }
 
         }
@@ -390,34 +394,47 @@ class AuctionController extends Controller
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
         // ОТПРАВКА НА ПОЧТУ УВЕДОМЛЕНИЯ
-        if ($auction_user->notification_off === NULL) {
-            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-            $mail->to($auction_user->email);
-            Mail::send($mail);
-            self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере " . $auction->id, $auction->id);
+        if($auction_user->notification_off === NULL) {
+        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+        $mail->to($auction_user->email);
+        Mail::send($mail);
+        self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере ".$auction->id);
         }
 
-        if ($rate_user->notification_off === NULL) {
-            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-            $mail->to($rate_user->email);
-            Mail::send($mail);
+        if($rate_user->notification_off === NULL) {
+        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+        $mail->to($rate_user->email);
+        Mail::send($mail);
         }
 
-        self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере " . $auction->id, $auction->id);
+        self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере ".$auction->id);
 
         if (!empty($last_rate)) {
-            $last_rate_user = User::find($last_rate->user_id);
-            if ($last_rate_user->notification_off === NULL) {
-                $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-                $mail->to($last_rate_user->email);
-                Mail::send($mail);
-                self::firebase_push_send($last_rate_user, $auction->type, "Новая ставка в тендере " . $auction->id, $auction->id);
+            $last_rate_user = User::find($last_rate->user_id);             
+            if($last_rate_user->notification_off === NULL) {
+            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);    
+            $mail->to($last_rate_user->email);
+            Mail::send($mail);
+            self::firebase_push_send($last_rate_user, $auction->type, "Новая ставка в тендере ".$auction->id);
             }
         }
 
         $text = 'Ваша ставка успешно добавлена';
         return response(['status' => 1, 'text' => $text], 200);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // Mobile Api
@@ -480,63 +497,63 @@ class AuctionController extends Controller
             $deliv_interval = $deliv_date - $over_date;
             $auction->deliv_interval = floor($deliv_interval / (60 * 60 * 24));
 
-            $rate = AuctionRate::where('auction_id', '=', $request->id)->where('user_id', $user->id)->where('status', '=', 2)->first();
-            //return response(['status' => 1, 'auction' =>  $rate], 200);
-            if ($rate != null) {
-                $get_tender_selection_notice = Notification::whereRaw('rateId=' . $rate->id . ' and userId=' . $rate->user_id . ' and type=1')->first();
-                if ($get_tender_selection_notice) {
-                    $get_tender_selection_notice->updated_at = Carbon::now();
+            $rate=AuctionRate::where('auction_id','=', $request->id)->where('user_id', $user->id)->where('status','=',2)->first();
+                    //return response(['status' => 1, 'auction' =>  $rate], 200);
+            if($rate!=null){
+                $get_tender_selection_notice=Notification::whereRaw('rateId='.$rate->id.' and userId='.$rate->user_id.' and type=1')->first();
+                if ($get_tender_selection_notice){
+                    $get_tender_selection_notice->updated_at=Carbon::now();
                     $get_tender_selection_notice->save();
-                } else {
+                }else{
                     $get_tender_selection_notice = new Notification();
-                    $get_tender_selection_notice->rateId = $rate->id;
-                    $get_tender_selection_notice->userId = $user->id;
-                    $get_tender_selection_notice->type = 1; //уведомление о выборе поставщика
-                    $get_tender_selection_notice->onDate = Carbon::now();
+                    $get_tender_selection_notice->rateId=$rate->id;
+                    $get_tender_selection_notice->userId=$user->id;
+                    $get_tender_selection_notice->type=1; //уведомление о выборе поставщика
+                    $get_tender_selection_notice->onDate=Carbon::now();
                     $get_tender_selection_notice->save();
                 }
-
-
+              
+              
                 //41. Поставщик получает уведомление о реквизитах и заключение договора
-                $get_notif_supplier_about_conclusion = Notification::whereRaw('rateId=' . $rate->id . ' and userId=' . $user->id . ' and type=3')->first();
-                if ($get_notif_supplier_about_conclusion) {
-                    $get_notif_supplier_about_conclusion->updated_at = Carbon::now();
+                $get_notif_supplier_about_conclusion=Notification::whereRaw('rateId='.$rate->id.' and userId='. $user->id.' and type=3')->first();
+                if ($get_notif_supplier_about_conclusion){
+                    $get_notif_supplier_about_conclusion->updated_at=Carbon::now();
                     $get_notif_supplier_about_conclusion->save();
-                } else {
+                }else{
                     //return response(['status' => 1, 'auction' => 'asdasdasd'], 200);
                     $get_notif_supplier_about_conclusion = new Notification();
-                    $get_notif_supplier_about_conclusion->rateId = $rate->id;
-                    $get_notif_supplier_about_conclusion->userId = $user->id;
-                    $get_notif_supplier_about_conclusion->type = 3; //уведомление если оставили предложение на его тендер
-                    $get_notif_supplier_about_conclusion->onDate = Carbon::now();
+                    $get_notif_supplier_about_conclusion->rateId=$rate->id;
+                    $get_notif_supplier_about_conclusion->userId=$user->id;
+                    $get_notif_supplier_about_conclusion->type=3; //уведомление если оставили предложение на его тендер
+                    $get_notif_supplier_about_conclusion->onDate=Carbon::now();
                     $get_notif_supplier_about_conclusion->save();
                 }
             }
 
-            $get_notif_submitted_offer_tender = Notification::whereRaw('rateId=' . $auction->id . ' and userId=' . $user->id . ' and type=2')->first();
-            if ($get_notif_submitted_offer_tender) {
-                $get_notif_submitted_offer_tender->updated_at = Carbon::now();
+            $get_notif_submitted_offer_tender=Notification::whereRaw('rateId='.$auction->id.' and userId='. $user->id.' and type=2')->first();
+            if ($get_notif_submitted_offer_tender){
+                $get_notif_submitted_offer_tender->updated_at=Carbon::now();
                 $get_notif_submitted_offer_tender->save();
-            } else {
+            }else{
                 $get_notif_submitted_offer_tender = new Notification();
-                $get_notif_submitted_offer_tender->rateId = $auction->id;
-                $get_notif_submitted_offer_tender->userId = $user->id;
-                $get_notif_submitted_offer_tender->type = 2; //eуведомление если оставили предложение на его тендер
-                $get_notif_submitted_offer_tender->onDate = Carbon::now();
+                $get_notif_submitted_offer_tender->rateId=$auction->id;
+                $get_notif_submitted_offer_tender->userId=$user->id;
+                $get_notif_submitted_offer_tender->type=2; //eуведомление если оставили предложение на его тендер
+                $get_notif_submitted_offer_tender->onDate=Carbon::now();
                 $get_notif_submitted_offer_tender->save();
             }
 
             //40. Покупатель получает уведомление о реквизитах и заключение договора
-            $get_notif_customer_about_conclusion = Notification::whereRaw('rateId=' . $auction->id . ' and userId=' . $user->id . ' and type=3')->first();
-            if ($get_notif_customer_about_conclusion) {
-                $get_notif_customer_about_conclusion->updated_at = Carbon::now();
+            $get_notif_customer_about_conclusion=Notification::whereRaw('rateId='.$auction->id.' and userId='. $user->id.' and type=3')->first();
+            if ($get_notif_customer_about_conclusion){
+                $get_notif_customer_about_conclusion->updated_at=Carbon::now();
                 $get_notif_customer_about_conclusion->save();
-            } else {
+            }else{
                 $get_notif_customer_about_conclusion = new Notification();
-                $get_notif_customer_about_conclusion->rateId = $auction->id;
-                $get_notif_customer_about_conclusion->userId = $user->id;
-                $get_notif_customer_about_conclusion->type = 3; //уведомление уведомление о реквизитах и заключение договора
-                $get_notif_customer_about_conclusion->onDate = Carbon::now();
+                $get_notif_customer_about_conclusion->rateId=$auction->id;
+                $get_notif_customer_about_conclusion->userId=$user->id;
+                $get_notif_customer_about_conclusion->type=3; //уведомление уведомление о реквизитах и заключение договора
+                $get_notif_customer_about_conclusion->onDate=Carbon::now();
                 $get_notif_customer_about_conclusion->save();
             }
 
@@ -557,7 +574,7 @@ class AuctionController extends Controller
                 }
             }
             // Если запрашиваются только собственные
-            if (!empty($request->own)) {
+            if (!empty($request->own)){
                 if ($request->own == true) {
                     if ($user->role_id == 101) {
                         $auctions->where('user_id', $user->id);
@@ -575,15 +592,15 @@ class AuctionController extends Controller
 
             // Фильтр по статусам
             if (!empty($request->status)) {
-                $status = array();
-                $i = 0;
-                foreach ($request->status as $key => $stat) {
-                    $status[$i] = $stat;
-                    $i++;
-                }
-                //  return response(['status' => 1, 'auctions' => $status[0]], 200);
-                $auctions->whereIn('status', $status);
-
+              $status = array();
+              $i=0;
+              foreach($request->status as $key=>$stat){
+                $status[$i]=$stat;
+                $i++;
+              }
+            //  return response(['status' => 1, 'auctions' => $status[0]], 200);
+              $auctions->whereIn('status', $status);
+             
             }
 
             // Прошедние или активные аукционы
@@ -596,7 +613,7 @@ class AuctionController extends Controller
                 }
             }
 
-            // Фильтр по строке поиска
+                // Фильтр по строке поиска
             if (!empty($request->search)) {
                 $searches = explode(" ", $request->search);
                 foreach ($searches as $search) {
@@ -695,7 +712,7 @@ class AuctionController extends Controller
 
 
             $auctions = $auctions->get();
-            //   return response(['1111'=>$auctions->get()],200);
+       //   return response(['1111'=>$auctions->get()],200);
 
             foreach ($auctions as $auction) {
                 $now = time();
@@ -726,6 +743,7 @@ class AuctionController extends Controller
                 $auction->delivery_date_formated = date('d.m.Y', strtotime($auction->delivery_date));
 
 
+                
             }
 
             return response(['status' => 1, 'auctions' => $auctions], 200);
@@ -733,32 +751,46 @@ class AuctionController extends Controller
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Mobile Api
-    public function get_tender_selection_notice()
-    {
-        $authuser = Auth::user()->id;
-        $sql = DB::select('
+    public function get_tender_selection_notice(){
+        $authuser=Auth::user()->id;
+        $sql=DB::select('
                                 SELECT
                                   *
                                 FROM auction_rates ar
-                                WHERE ar.user_id = ' . $authuser . '
+                                WHERE ar.user_id = '.$authuser.'
                                 AND ar.status = 2
-                                AND ar.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId=' . $authuser . ' AND n.rateId=ar.id)
+                                AND ar.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId='.$authuser.' AND n.rateId=ar.id)
         ');
-        $notifCount = count($sql);
-        if ($sql > 0) {
-            $text = 'У вас есть ' . count($sql) . ' подтвержденных(ое) предложений(ия)';
-        } else {
-            $text = 'нет подтвержденых предложений';
+        $notifCount=count($sql);
+        if ($sql>0){
+            $text='У вас есть '.count($sql).' подтвержденных(ое) предложений(ия)';
+        }else{
+            $text='нет подтвержденых предложений';
         }
-        return response(['status' => 1, 'notifCount' => $notifCount, 'text' => $text, 'rate' => $sql], 200);
+        return response(['status' => 1,  'notifCount'=>$notifCount, 'text' => $text, 'rate'=>$sql], 200);
     }
 
     // Mobile Api
-    public function get_notif_submitted_offer_tender()
-    {
-        $authuser = Auth::user()->id;
-        $sql = DB::select('
+    public function get_notif_submitted_offer_tender(){
+        $authuser=Auth::user()->id;
+        $sql=DB::select('
                                 SELECT
                                   ar.id,
                                   ar.auction_id,
@@ -772,76 +804,74 @@ class AuctionController extends Controller
                                   ar.updated_at
                                  FROM auction_rates ar
                                 INNER JOIN auctions as a on a.id=ar.auction_id
-                                WHERE a.user_id = ' . $authuser . '
-                                AND a.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId=' . $authuser . ' AND n.rateId=ar.auction_id AND n.type=2)
+                                WHERE a.user_id = '.$authuser.'
+                                AND a.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId='.$authuser.' AND n.rateId=ar.auction_id AND n.type=2)
         ');
-        $notifCount = count($sql);
-        if ($sql > 0) {
-            $text = 'У вас есть ' . count($sql) . ' оставленных(ая) предложений(ия)';
-        } else {
-            $text = 'нет подтвержденных предложений';
+        $notifCount=count($sql);
+        if ($sql>0){
+            $text='У вас есть '.count($sql).' оставленных(ая) предложений(ия)';
+        }else{
+            $text='нет подтвержденых предложений';
         }
-        return response(['status' => 1, 'notifCount' => $notifCount, 'text' => $text, 'rate' => $sql], 200);
+        return response(['status' => 1,  'notifCount'=>$notifCount, 'text' => $text, 'rate'=>$sql], 200);
     }
 
     // Mobile Api 40. Покупатель
-    public function get_notif_customer_about_conclusion()
-    {
-        $authuser = Auth::user()->id;
-        $sql = DB::select('SELECT 
+    public function get_notif_customer_about_conclusion(){
+        $authuser=Auth::user()->id;
+        $sql=DB::select('SELECT 
                                  *
                                 FROM auctions a
                                 INNER JOIN auction_rates ar ON ar.auction_id=a.id AND ar.status=2
-                                WHERE a.user_id = ' . $authuser . ' AND a.status=2
-                                AND a.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId= ' . $authuser . ' AND n.rateId=a.id AND n.type=3)
+                                WHERE a.user_id = '.$authuser.' AND a.status=2
+                                AND a.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId= '.$authuser.' AND n.rateId=a.id AND n.type=3)
         ');
-        $notifCount = count($sql);
-        if ($sql > 0) {
-            $text = 'У вас заключеные договора: ' . count($sql);
-        } else {
-            $text = 'нет заключенных договоров';
+        $notifCount=count($sql);
+        if ($sql>0){
+            $text='У вас заключеные договора: '.count($sql);
+        }else{
+            $text='нет заключенных договоров';
         }
-        return response(['status' => 1, 'notifCount' => $notifCount, 'text' => $text, 'rate' => $sql], 200);
+        return response(['status' => 1,  'notifCount'=>$notifCount, 'text' => $text, 'rate'=>$sql], 200);
     }
 
     // Mobile Api 41. Поставщик
-    public function get_notif_supplier_about_conclusion()
-    {
-        $authuser = Auth::user()->id;
-        $sql = DB::select('
+    public function get_notif_supplier_about_conclusion(){
+        $authuser=Auth::user()->id;
+        $sql=DB::select('
                                 SELECT 
                                  *
                                 FROM auction_rates ar 
                                 INNER JOIN auctions a ON a.id= ar.auction_id AND a.status=2
-                                WHERE ar.user_id = ' . $authuser . ' AND ar.status=2
-                                AND ar.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId=' . $authuser . ' AND n.rateId=a.win_rate_id AND n.type=3);
+                                WHERE ar.user_id = '.$authuser.' AND ar.status=2
+                                AND ar.user_id NOT IN (SELECT n.userId FROM notif_view n WHERE n.userId='.$authuser.' AND n.rateId=a.win_rate_id AND n.type=3);
         ');
-        $notifCount = count($sql);
-        if ($sql > 0) {
-            $text = 'У вас заключеные договора: ' . count($sql);
-        } else {
-            $text = 'нет заключенных договоров';
+        $notifCount=count($sql);
+        if ($sql>0){
+            $text='У вас заключеные договора: '.count($sql);
+        }else{
+            $text='нет заключенных договоров';
         }
-        return response(['status' => 1, 'notifCount' => $notifCount, 'text' => $text, 'rate' => $sql], 200);
+        return response(['status' => 1,  'notifCount'=>$notifCount, 'text' => $text, 'rate'=>$sql], 200);
     }
 
     // Mobile Api 
-    public function getRegions()
-    {
-        $auctions = DB::table('auctions')->whereRaw("delivery_region IS NOT NULL AND delivery_region !=''")
-            ->select(
-                'delivery_region'
-            )->groupBy('delivery_region')->get();
+    public function getRegions(){
+        $auctions =   DB::table('auctions')->whereRaw("delivery_region IS NOT NULL AND delivery_region !=''")
+                            ->select(
+                                        'delivery_region'
+                                    )->groupBy('delivery_region')->get();
 
         return response(['status' => 1, 'regions' => $auctions], 200);
     }
+
 
 
     // Mobile Api
     public function apiMobile_get_contract_file(Request $request)
     {
 
-        $auction = DB::table('auctions')->where('id', $request->tender_id)->first();
+        $auction = DB::table('auctions')->where('id',$request->tender_id)->first();
         $customer = json_decode($auction->customer_contract_files);
         $supplier = json_decode($auction->supplier_contract_files);
         $data = [];
@@ -863,19 +893,20 @@ class AuctionController extends Controller
                 ];
             }
         }
-        $data["auction_contract"][] = [
-            'name' => 'Договор поставки №ЭТП-' . $auction->id . '.pdf',
-            'link' => $request->getHttpHost() . '/api/get_auction_contract_pdf/' . $auction->id,
+        $data["auction_contract"][]=[
+            'name'=>  'Договор поставки №ЭТП-' . $auction->id . '.pdf',
+            'link'=>  $request->getHttpHost().'/api/get_auction_contract_pdf/'.$auction->id,
         ];
         return response(['status' => 1, 'data' => $data], 200);
     }
 
 
-    // Mobile Api
-    public function apiMobile_get_contract_file_download_file($god, $naz)
-    {
+
+
+    // Mobile Api 
+    public function apiMobile_get_contract_file_download_file($god,$naz){
         {
-            $file = storage_path('app/public/contracts/' . $god . '/' . $naz);
+            $file = storage_path('app/public/contracts/'.$god.'/' . $naz);
             $headers = array(
                 'Content-Type: application/pdf',
             );
@@ -886,13 +917,20 @@ class AuctionController extends Controller
 
     // Mobile Api
     public function apiMobile_get_auction_contract_pdf($auctionId)
-    {
-        $auction = Auction::with('rates', 'win_rate', 'user')->whereRaw('id=' . $auctionId)->first();
+    { 
+       $auction = Auction::with('rates', 'win_rate', 'user')->whereRaw('id='.$auctionId)->first();
         $auction->article = sprintf("%05s", $auction->id);
         $pdf = PDF::loadView('pdf.auction_contract', ['auction' => $auction]);
         return $pdf->download('Договор поставки №ЭТП-' . $auction->id . '.pdf');
         return response(['status' => 1, 'text' => "Файл договора сформирован и откроется в новой вкладке"], 200);
     }
+  
+
+
+
+
+
+
 
 
 }
