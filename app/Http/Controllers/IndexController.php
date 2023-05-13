@@ -34,7 +34,7 @@ class IndexController extends Controller
         $now = date('Y-m-d H:i:s');
         $limit = 5;
         $tenders = DB::table('auctions')
-            ->where('type', 'drop');
+            ->whereIn('type', ['drop', 'dropdv']);
         $tenders->whereIn('status', [1]);
         $tenders->where('over_date', '>', $now);
         $tenders = $tenders->orderBy('id', 'desc')->take($limit)->get();
@@ -229,7 +229,7 @@ class IndexController extends Controller
 
         $now = date('Y-m-d H:i:s');
         $auctions = DB::table('auctions')
-            ->where('type', $request->type);
+            ->whereIn('type', $request->type);
 
         // Фильтр по статусам
         if (!empty($request->status)) {

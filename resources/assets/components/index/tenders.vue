@@ -215,7 +215,7 @@ export default {
         this.loading = true
         let params = {        
             now: true,
-            type: 'drop',
+            type: ['drop', 'dropdv'],
             status: [1],
             date_filter: this.date_filter,
             date_from: this.date_from,

@@ -2,7 +2,7 @@
   <v-app id="vue_block">
     <v-container fluid grid-list-xl class="px-0 py-0">
 
-      <pre><code>{{ item }}</code></pre>
+<!--      <pre><code>{{ item }}</code></pre>-->
 
       <FieldAccess model="admin" field="lang" field_name="Язык" v-slot="{ accessData }">
         <AdminPanel v-if="accessData.canAdmin" class="mb-3" :loading="loading"/>
@@ -20,6 +20,8 @@
 
 
               <template v-for="(item_title, item_index) in item.titles">
+
+<!--                <pre><code>{{item_title}}</code></pre>-->
 
                 <FieldAccess :model="prefix+'tender'" field="title"
                              field_name="Наименование препарата" v-slot="{ accessData }">
@@ -1259,6 +1261,7 @@ export default {
         })
       }
       this.loading = false
+      window.location = "/admin/tender/mylist";
     },
 
     //140323
