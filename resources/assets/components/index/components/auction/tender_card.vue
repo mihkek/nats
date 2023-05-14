@@ -17,7 +17,7 @@
               </v-card-text>
               <v-card-text primary-title class="py-0 px-6 subtitle">
                 <p class="font-weight-medium text-decoration-none my-0 mat-title" style="">
-                  <span>{{ item.auction.title }}<br><span class="font-weight-regular">{{ item.auction.active_material }}</span>
+                  <span>{{ item.auction.title }}<br><span class="font-weight-regular">{{ item.auction.title == item.auction.active_material ? '' :  item.auction.active_material}}</span>
                     <span v-if="item.auction.is_analog" class="font-weight-regular"><br>или аналог
                       <template v-if="item.auction.exclude_analogs && item.auction.exclude_analogs.length>=1">
                         за исключением:
