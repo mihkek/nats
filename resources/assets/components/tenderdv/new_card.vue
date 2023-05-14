@@ -17,12 +17,72 @@
             </v-card-title>
 
 
-
-
-
             <template v-for="(item_title, item_index) in item.titles">
+              <FieldAccess :model="prefix+'tender'" field="active_material"
+                                        field_name="Наименование действующего вещества" v-slot="{ accessData }">
+                             <v-divider class="my-0"></v-divider>
+                             <v-list-item>
+                               <v-list-item-content>
+                                 <v-list-item-subtitle>Наименование действующего вещества *
 
-              <FieldAccess :model="prefix+'tender'" field="title"
+                                   <v-tooltip right>
+                                     <template v-slot:activator="{ on, attrs }">
+                                       <v-icon
+                                           small
+                                           color="primary"
+                                           dark
+                                           v-bind="attrs"
+                                           v-on="on"
+                                       >
+                                         mdi-help-circle-outline
+                                       </v-icon>
+                                     </template>
+                                     <span>Начните вводить название препарата и выберете необходимый из предложенного</span>
+                                   </v-tooltip>
+
+                                 </v-list-item-subtitle>
+                                 <p class="my-0">{{ item_title.active_material || '-' }}</p>
+                               </v-list-item-content>
+
+                               <v-list-item-icon v-if="accessData.canEdit">
+                                 <v-tooltip top v-if="!(auction.id > 0) || auth_user.role_id == 1000">
+                                   <template v-slot:activator="{ on }">
+                                     <v-btn color="red darken-1" icon x-small v-on="on" class="my-icon-btn mr-1"
+                                            @click.stop="editItem({ text: 'Наименование действующего вещества', index: item_index,  val: 'active_material', type: 'v-titles-select', options: dv_options })">
+                                       <v-icon>mdi-sync</v-icon>
+                                     </v-btn>
+                                   </template>
+
+                                   <span class="caption" v-html="__('buttons.edit_tooltip')"></span>
+                                 </v-tooltip>
+                                 <FieldAccessButton :accessData="accessData"/>
+                               </v-list-item-icon>
+                             </v-list-item>
+              <!--                &lt;!&ndash;<v-list-item>-->
+              <!--                  <v-list-item-content style="padding-top:0;">-->
+              <!--                    <v-list-item-subtitle>Действующее веществo-->
+
+              <!--      <v-tooltip right>-->
+              <!--      <template v-slot:activator="{ on, attrs }">-->
+              <!--        <v-icon-->
+              <!--        small-->
+              <!--          color="primary"-->
+              <!--          dark-->
+              <!--          v-bind="attrs"-->
+              <!--          v-on="on"-->
+              <!--        >-->
+              <!--          mdi-help-circle-outline-->
+              <!--        </v-icon>-->
+              <!--      </template>-->
+              <!--      <span>В этом окне вы увидите действующее вещество в составе выбранного препарата</span>-->
+              <!--    </v-tooltip>-->
+              <!--                    </v-list-item-subtitle>-->
+              <!--                    <p class="my-0">{{ item.active_material || '-' }}</p>-->
+              <!--                  </v-list-item-content>-->
+              <!--                </v-list-item>&ndash;&gt;-->
+                           </FieldAccess>
+
+              <!-- <FieldAccess :model="prefix+'tender'" field="title"
                            field_name="Наименование препарата" v-slot="{ accessData }">
                 <v-divider class="my-0"></v-divider>
                 <v-list-item>
@@ -55,13 +115,14 @@
                                @click.stop="editItem({ text: 'Наименование средства', index: item_index, val: 'title', type: 'v-titles-select', options: v_select_title_options })">
                           <v-icon>mdi-sync</v-icon>
                         </v-btn>
-                      </template>
+                      </template> -->
+                      <!-- UNUSED!! -->
                       <!--
                                   <template v-slot:activator="{ on }">
                                               <v-btn color="red darken-1" icon x-small v-on="on" class="my-icon-btn mr-1" @click.stop="editItem({ text: 'Наименование средства', val: 'title', type: 'text' })"><v-icon>mdi-sync</v-icon></v-btn>
                                             </template>
                       -->
-                      <span class="caption" v-html="__('buttons.edit_tooltip')"></span>
+                      <!-- <span class="caption" v-html="__('buttons.edit_tooltip')"></span>
                     </v-tooltip>
                     <FieldAccessButton :accessData="accessData"/>
                   </v-list-item-icon>
@@ -88,7 +149,7 @@
                     <p class="my-0">{{ item_title.active_material || '-' }}</p>
                   </v-list-item-content>
                 </v-list-item>
-              </FieldAccess>
+              </FieldAccess> -->
 
 
               <!--              <FieldAccess :model="prefix+'tender'" field="is_analog"-->
@@ -292,7 +353,7 @@
 
                       >
                         <v-icon left size="20">mdi-plus</v-icon>
-                        Добавить препарат
+                        Добавить действующее вещество
                       </v-btn>
                     </v-list-item-subtitle>
                   </v-list-item-content>
@@ -305,69 +366,6 @@
             </template>
 
             <v-list subheader>
-              <!--              <FieldAccess :model="prefix+'tender'" field="title"-->
-              <!--                           field_name="Наименование действующего вещества" v-slot="{ accessData }">-->
-              <!--                <v-divider class="my-0"></v-divider>-->
-              <!--                <v-list-item>-->
-              <!--                  <v-list-item-content>-->
-              <!--                    <v-list-item-subtitle>Наименование действующего вещества *-->
-
-              <!--                      <v-tooltip right>-->
-              <!--                        <template v-slot:activator="{ on, attrs }">-->
-              <!--                          <v-icon-->
-              <!--                              small-->
-              <!--                              color="primary"-->
-              <!--                              dark-->
-              <!--                              v-bind="attrs"-->
-              <!--                              v-on="on"-->
-              <!--                          >-->
-              <!--                            mdi-help-circle-outline-->
-              <!--                          </v-icon>-->
-              <!--                        </template>-->
-              <!--                        <span>Начните вводить название препарата и выберете необходимый из предложенного</span>-->
-              <!--                      </v-tooltip>-->
-
-              <!--                    </v-list-item-subtitle>-->
-              <!--                    <p class="my-0">{{ item.title || '-' }}</p>-->
-              <!--                  </v-list-item-content>-->
-
-              <!--                  <v-list-item-icon v-if="accessData.canEdit">-->
-              <!--                    <v-tooltip top v-if="!(auction.id > 0) || auth_user.role_id == 1000">-->
-              <!--                      <template v-slot:activator="{ on }">-->
-              <!--                        <v-btn color="red darken-1" icon x-small v-on="on" class="my-icon-btn mr-1"-->
-              <!--                               @click.stop="editItem({ text: 'Наименование действующего вещества', val: 'title', type: 'v-select', options: dv_options })">-->
-              <!--                          <v-icon>mdi-sync</v-icon>-->
-              <!--                        </v-btn>-->
-              <!--                      </template>-->
-
-              <!--                      <span class="caption" v-html="__('buttons.edit_tooltip')"></span>-->
-              <!--                    </v-tooltip>-->
-              <!--                    <FieldAccessButton :accessData="accessData"/>-->
-              <!--                  </v-list-item-icon>-->
-              <!--                </v-list-item>-->
-              <!--                &lt;!&ndash;<v-list-item>-->
-              <!--                  <v-list-item-content style="padding-top:0;">-->
-              <!--                    <v-list-item-subtitle>Действующее веществo-->
-
-              <!--      <v-tooltip right>-->
-              <!--      <template v-slot:activator="{ on, attrs }">-->
-              <!--        <v-icon-->
-              <!--        small-->
-              <!--          color="primary"-->
-              <!--          dark-->
-              <!--          v-bind="attrs"-->
-              <!--          v-on="on"-->
-              <!--        >-->
-              <!--          mdi-help-circle-outline-->
-              <!--        </v-icon>-->
-              <!--      </template>-->
-              <!--      <span>В этом окне вы увидите действующее вещество в составе выбранного препарата</span>-->
-              <!--    </v-tooltip>-->
-              <!--                    </v-list-item-subtitle>-->
-              <!--                    <p class="my-0">{{ item.active_material || '-' }}</p>-->
-              <!--                  </v-list-item-content>-->
-              <!--                </v-list-item>&ndash;&gt;-->
-              <!--              </FieldAccess>-->
 
               <!--<FieldAccess :model="prefix+'tender'" field="is_analog"
                            field_name="Можно предлагать аналоги по ДВ" v-slot="{ accessData }">
@@ -1493,7 +1491,7 @@ export default {
 
     submitTenderItem(itemTitle) {
       this.loading = true
-      this.item.title = itemTitle.title
+      this.item.title = itemTitle.active_material //itemTitle.title
       this.item.active_material = itemTitle.active_material
       this.item.is_analog = itemTitle.is_analog
       this.item.exclude_analogs = itemTitle.exclude_analogs
@@ -1509,10 +1507,14 @@ export default {
             alert("Тендер " + itemTitle.title + " создан успешно");
             this.tender_created = true;
           }
+          window.location = "/admin/tenderdv/mylist";
+        })
+        .catch((err) => {
+          alert("При создании тендера " + itemTitle.title + " произошла ошибка. Повторите попытку позднее");
         })
       }
       this.loading = false
-      window.location = "/admin/tenderdv/mylist";
+      
     },
 
     titleAdd() {
