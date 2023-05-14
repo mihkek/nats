@@ -150,7 +150,7 @@
                       </td>
 
 
-                      <td>
+                      <td style="max-width: 30vw;">
                         <v-list-item class="px-0">
                           <v-list-item-content>
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -277,7 +277,7 @@
                           </v-list-item-content>
                         </v-list-item>
                       </td>
-                      <td>
+                      <td style="max-width: 30vw;">
                         <v-list-item class="px-0">
                           <v-list-item-content>
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
