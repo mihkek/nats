@@ -723,7 +723,7 @@ class AuctionController extends BaseController
 
 
 
-        $auction->over_date = $request->over_date . ' 17:04:59'; // 16:59:59
+        $auction->over_date = $request->over_date . ' 17:00:00'; // 16:59:59
         $auction->delivery_date = $request->delivery_date ?? date('Y-m-d');
         $auction->delivery_condition = $request->delivery_condition;
         $auction->delivery_region = $request->delivery_region;

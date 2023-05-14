@@ -153,7 +153,7 @@
                       <td style="max-width: 30vw;">
                         <v-list-item class="px-0">
                           <v-list-item-content>
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            <v-list-item-title style="white-space: normal;">{{ item.title }}</v-list-item-title>
                             <v-list-item-subtitle>{{ item.delivery_region }}</v-list-item-subtitle>
                           </v-list-item-content>
                         </v-list-item>
@@ -280,7 +280,7 @@
                       <td style="max-width: 30vw;">
                         <v-list-item class="px-0">
                           <v-list-item-content>
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            <v-list-item-title style="white-space: normal;">{{ item.title }}</v-list-item-title>
                             <v-list-item-subtitle>{{ item.delivery_region }}</v-list-item-subtitle>
                           </v-list-item-content>
                         </v-list-item>
