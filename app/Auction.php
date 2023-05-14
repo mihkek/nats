@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\SaleRate;
@@ -11,11 +12,19 @@ use Mirronix\LogGlobal\Traits\LogGlobalTrait;
 use App\Models\Traits\UsersOrgRestrictedTrait;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Scopes\UsersOrgRestrictedScope;
+use App\Observers\AuctionObserver;
 use Intervention\Image\Facades\Image as ImageInt;
 
 class Auction extends Model
 {
     use LogGlobalTrait;
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::observe(AuctionObserver::class);
+    }
 
     public function user()
     {
@@ -29,22 +38,21 @@ class Auction extends Model
     {
         return $this->belongsTo('App\AuctionRate', 'win_rate_id')->with('user');
     }
-    
+
     public function price()
     {
 
         $price = null;
         $price_date_time = null;
         $rate = DB::table('auction_rates')
-                    ->where('auction_id', $this->id)
-                    ->orderBy('id', 'desc')
-                    ->first();
+            ->where('auction_id', $this->id)
+            ->orderBy('id', 'desc')
+            ->first();
 
         if (!empty($rate)) {
             $price = $rate->price;
             $price_date_time = date('d.m.Y H:i', strtotime($rate->created_at));
-        }
-        else {
+        } else {
             $price = $this->start_price;
         }
         $res = array(
@@ -67,8 +75,4 @@ class Auction extends Model
             }
         return $sale_rate_price;
     }*/
-
-
-
-    
 }

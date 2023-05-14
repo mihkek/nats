@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Auction;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -16,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-	Schema::defaultStringLength(191);
+        Schema::defaultStringLength(191);
         Blade::directive('lang', function ($expression) {
             return "<?php echo Lang::has($expression) ? Lang::get($expression) : '<span class=\"no_translate\" data-expression=\"' . htmlspecialchars($expression) . '\">' . $expression . '</span>'; ?>";
         });
