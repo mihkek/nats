@@ -35,6 +35,7 @@ use Intervention\Image\Facades\Image as ImageInt;
 
 use App\Notification;
 use Carbon\Carbon;
+use Error;
 
 class AuctionController extends BaseController
 {
@@ -105,7 +106,7 @@ class AuctionController extends BaseController
     public function getTenderDvList(Request $request)
     {
         return view('admin.tenderdv.archive');
-    }    
+    }
 
     //############## АРХИВ ТЕНДЕРОВ ##############
     public function getTenderMyList(Request $request)
@@ -198,57 +199,60 @@ class AuctionController extends BaseController
     }
 
 
-    static function enableNotification() {         
+    static function enableNotification()
+    {
         return true;
     }
 
     // ссылка на карточку
-    static function getLinkCard($auction_type, $auction_id) {       
+    static function getLinkCard($auction_type, $auction_id)
+    {
         $link_card = "";
         if ($auction_type === 'rise') {
-           $link_card = 'https://agtender.com/admin/auction/now/card/' . $auction_id;
+            $link_card = 'https://agtender.com/admin/auction/now/card/' . $auction_id;
         }
         if ($auction_type === 'drop') {
-           $link_card = 'https://agtender.com/admin/tender/now/card/' . $auction_id;
+            $link_card = 'https://agtender.com/admin/tender/now/card/' . $auction_id;
         }
         if ($auction_type === 'dropdv') {
-           $link_card = 'https://agtender.com/admin/tenderdv/now/card/' . $auction_id;
+            $link_card = 'https://agtender.com/admin/tenderdv/now/card/' . $auction_id;
         }
         if ($auction_type === 'sale') {
-           $link_card = 'https://agtender.com/admin/sale/now/card/' . $auction_id;
+            $link_card = 'https://agtender.com/admin/sale/now/card/' . $auction_id;
         }
         return $link_card;
     }
 
 
-    public function firebase_push_send($user, $auction_type, $firebase_text) {
+    public function firebase_push_send($user, $auction_type, $firebase_text)
+    {
         $firebase_title = "НАТС Тендеры";
         $firebase_token = $user->firebase_token;
-        if (isset($user->firebase_token) && !empty($firebase_token) && ($auction_type === "drop")) {          
-        $firebase_key = "AAAA8YW6Ths:APA91bHMAQYsCeehzLtkfrPznUKL1Cqdt38zTtUutwesuJXQTTmxvh7V6n1H156kTBkAbT3K8h-frGVNEA0WrKcJKioh8BMHrrVV9ODkXS110r7iN0GwY6MNrq6PT1lWi-pXR6Y7MfNA";
-        $firebase_url = 'https://fcm.googleapis.com/fcm/send';
-        $fields = array (
-            'to' => $firebase_token,
-            'notification' => array (
-                "title" =>  $firebase_title,
-                "body" => $firebase_text,
-                "badge" => 1,
-            ),
-        );
-        $fields = json_encode($fields);
-        $headers = array (
-            'Authorization: key=' . $firebase_key,
-            'Content-Type: application/json'
-        );
-        $ch = curl_init ();
-        curl_setopt ( $ch, CURLOPT_URL, $firebase_url );
-        curl_setopt ( $ch, CURLOPT_POST, true );
-        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields );
-        $result = curl_exec ( $ch );
-        //echo $result;
-        curl_close ( $ch );
+        if (isset($user->firebase_token) && !empty($firebase_token) && ($auction_type === "drop")) {
+            $firebase_key = "AAAA8YW6Ths:APA91bHMAQYsCeehzLtkfrPznUKL1Cqdt38zTtUutwesuJXQTTmxvh7V6n1H156kTBkAbT3K8h-frGVNEA0WrKcJKioh8BMHrrVV9ODkXS110r7iN0GwY6MNrq6PT1lWi-pXR6Y7MfNA";
+            $firebase_url = 'https://fcm.googleapis.com/fcm/send';
+            $fields = array(
+                'to' => $firebase_token,
+                'notification' => array(
+                    "title" =>  $firebase_title,
+                    "body" => $firebase_text,
+                    "badge" => 1,
+                ),
+            );
+            $fields = json_encode($fields);
+            $headers = array(
+                'Authorization: key=' . $firebase_key,
+                'Content-Type: application/json'
+            );
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $firebase_url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+            $result = curl_exec($ch);
+            //echo $result;
+            curl_close($ch);
         }
     }
 
@@ -275,7 +279,7 @@ class AuctionController extends BaseController
     public function deleteMyAuction(Request $request, $id)
     {
         $delete_auction = MyAuctionHistory::where('auction_id', $id)
-            ->where('user_id',Auth::user()->id)->first();
+            ->where('user_id', Auth::user()->id)->first();
         $delete_auction->delete();
         return response(['status' => 1], 200);
     }
@@ -330,7 +334,6 @@ class AuctionController extends BaseController
                         $rate->block = true;
                     }
                 }
-
             } else {
                 $auction->price = null;
             }
@@ -340,9 +343,9 @@ class AuctionController extends BaseController
             if ($auction->type === 'sale') {
                 $start_price = 0;
                 $date_now = date('Y-m-d H:i:s');
-                $sale_rate_item = SaleRate::where('auction_id', $auction->id)->where('date_price', '<=',  $date_now)->orderBy('id','desc')->first();       
+                $sale_rate_item = SaleRate::where('auction_id', $auction->id)->where('date_price', '<=',  $date_now)->orderBy('id', 'desc')->first();
                 if (!empty($sale_rate_item)) {
-                    $start_price =  $sale_rate_item->price;                    
+                    $start_price =  $sale_rate_item->price;
                 } else {
                     $start_price = $auction->start_price;
                 }
@@ -359,7 +362,7 @@ class AuctionController extends BaseController
                 $auction->completed = 0;
             }
             $auction->over_date = date('Y-m-d', strtotime($auction->over_date));
-//            $auction->article = str_pad($auction->id, 6-mb_strlen($auction->id), '0', STR_PAD_LEFT);
+            //            $auction->article = str_pad($auction->id, 6-mb_strlen($auction->id), '0', STR_PAD_LEFT);
             $auction->article = sprintf("%05s", $auction->id);
             $auction->exclude_analogs = json_decode($auction->exclude_analogs);
 
@@ -381,20 +384,19 @@ class AuctionController extends BaseController
             } else {
                 $subdivision_id = 1;
             }
-
             // Выбираем аукционы или тендеры с нужным подразделением
             $auctions = Auction::where('type', $request->type)->where('subdivision_id', $subdivision_id);
             $delete_auction = MyAuctionHistory::where('user_id', Auth::user()->id)->pluck('auction_id')->toArray();
             if (isset($request->deleted_auction)) {
                 if ($request->deleted_auction == 1) {
-                        $auctions->whereIn('id', $delete_auction);
+                    $auctions->whereIn('id', $delete_auction);
                 }
             }
             // Если запрашиваются только собственные
             if (!empty($request->own)) {
 
                 // мои тендеры
-                if ($request->own == true && $request->type==='drop') {
+                if (($request->own == true && $request->type === 'drop') || ($request->own == true && $request->type === 'dropdv')) {
                     if ($user->role_id == 101) {
                         $auctions->where('user_id', $user->id);
                     } elseif ($user->role_id == 102) {
@@ -421,26 +423,9 @@ class AuctionController extends BaseController
                 }
 
                 // мои аукционы поставщиков 
-                if ($request->own == true && $request->type==='rise') {
+                if ($request->own == true && $request->type === 'rise') {
                     if ($user->role_id == 101) {
                         $auctions->where('user_id', $user->id);
-                    } elseif ($user->role_id == 102) {                       
-                         $supplier_rates = AuctionRate::where('user_id', $user->id)->get();
-                        $auctions_id = array();
-                        foreach ($supplier_rates as $supplier_rate) {
-                            array_push($auctions_id, $supplier_rate->auction_id);
-                        }
-                        $uniq_auctions_id = array_unique($auctions_id);
-                        $auctions->whereIn('id', $uniq_auctions_id);
-                        $auctions->orWhere('user_id', $user->id);
-                    }
-                }
-
-
-                // мои распродажи 
-                if ($request->own == true && $request->type==='sale') {
-                    if ($user->role_id == 101) {
-                         $auctions->where('user_id', $user->id);
                     } elseif ($user->role_id == 102) {
                         $supplier_rates = AuctionRate::where('user_id', $user->id)->get();
                         $auctions_id = array();
@@ -453,6 +438,22 @@ class AuctionController extends BaseController
                     }
                 }
 
+
+                // мои распродажи 
+                if ($request->own == true && $request->type === 'sale') {
+                    if ($user->role_id == 101) {
+                        $auctions->where('user_id', $user->id);
+                    } elseif ($user->role_id == 102) {
+                        $supplier_rates = AuctionRate::where('user_id', $user->id)->get();
+                        $auctions_id = array();
+                        foreach ($supplier_rates as $supplier_rate) {
+                            array_push($auctions_id, $supplier_rate->auction_id);
+                        }
+                        $uniq_auctions_id = array_unique($auctions_id);
+                        $auctions->whereIn('id', $uniq_auctions_id);
+                        $auctions->orWhere('user_id', $user->id);
+                    }
+                }
             }
 
             // Фильтр по статусам
@@ -533,7 +534,7 @@ class AuctionController extends BaseController
 
             if (!empty($request->excel)) {
                 if ($user->role_id != 1000) return response(['status' => 0, 'message' => 'Request denied - adimn rights required'], 200);
-//				$auctions->leftjoin(AuctionRate);
+                //				$auctions->leftjoin(AuctionRate);
                 $auctions->select(
                     'id',
                     'user_id',
@@ -567,7 +568,7 @@ class AuctionController extends BaseController
                     $filedate = array_pop($filedate);
                     if (!preg_match("/^[0-9]{14}$/", $filedate)) continue;
                     if ($filedate < date('YmdHis', $time - 60)) {
-//					return response([ 'status' => 1, 'link' => '/storage/excel/'.basename($file)], 200);
+                        //					return response([ 'status' => 1, 'link' => '/storage/excel/'.basename($file)], 200);
                         Storage::delete('public/excel/' . basename($file));
                     }
                 }
@@ -581,7 +582,7 @@ class AuctionController extends BaseController
 
 
             foreach ($auctions as $auction_key => $auction) {
-                
+
                 $now = time();
                 $date = strtotime($auction->over_date);
                 $datediff = $date - $now;
@@ -595,14 +596,12 @@ class AuctionController extends BaseController
 
                 if ($auction->type === 'rise') {
                     $rate = $auction->price();
-                } 
-                elseif  ($auction->type === 'sale') { // распродажи
+                } elseif ($auction->type === 'sale') { // распродажи
                     $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first();
+                } else {
+                    $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first(); // 050522
                 }
-                else {
-                   $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first(); // 050522
-                }  
-                
+
                 $user_rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('user_id', $user->id)->where('deleted', '')->orderBy('price')->first();
 
 
@@ -610,11 +609,11 @@ class AuctionController extends BaseController
                 //21.07.22 распродажи
                 if ($auction->type === 'sale') {
                     $date_now = date('Y-m-d H:i:s');
-                    $sale_rate = SaleRate::where('auction_id', $auction->id)->where('date_price', '<=',  $date_now)->orderBy('id','desc')->first();                     
+                    $sale_rate = SaleRate::where('auction_id', $auction->id)->where('date_price', '<=',  $date_now)->orderBy('id', 'desc')->first();
                     if (!empty($sale_rate)) {
                         $auction->sale_rate = $sale_rate;
-                    }           
-                }                
+                    }
+                }
 
 
                 if (!empty($rate)) {
@@ -625,19 +624,15 @@ class AuctionController extends BaseController
                 }
 
 
-//                $auction->article = str_pad($auction->id, 6-mb_strlen($auction->id), '0', STR_PAD_LEFT);
+                //                $auction->article = str_pad($auction->id, 6-mb_strlen($auction->id), '0', STR_PAD_LEFT);
                 $auction->article = sprintf("%05s", $auction->id);
                 $auction->created_formated = date('d.m.Y H:i', strtotime($auction->created_at));
                 $auction->date_formated = date('d.m.Y', strtotime($auction->over_date));
                 $auction->over_date = date('Y-m-d', strtotime($auction->over_date));
                 $auction->delivery_date_formated = date('d.m.Y', strtotime($auction->delivery_date));
-
-                
-                
-
             }
 
-        return response(['status' => 1, 'auctions' => $auctions], 200);
+            return response(['status' => 1, 'auctions' => $auctions], 200);
         }
     }
 
@@ -662,7 +657,7 @@ class AuctionController extends BaseController
             }
             if ($auction->type == 'dropdv') {
                 $text = 'Информация о тендере успешно изменена';
-            }     
+            }
         } else {
             $new = true;
             $auction = new Auction;
@@ -702,14 +697,14 @@ class AuctionController extends BaseController
             $request_is_analog = $request->is_analog;
             if ($request_is_analog == 1) {
                 $is_analog = 1;
-            } 
+            }
             if ($request_is_analog == 0) {
                 $is_analog = 0;
             }
             //mobile error
             if ($request_is_analog == 2) {
                 $is_analog = 0;
-            } 
+            }
         }
 
         $auction->is_analog = $is_analog;
@@ -729,12 +724,14 @@ class AuctionController extends BaseController
 
 
         $auction->over_date = $request->over_date . ' 17:04:59'; // 16:59:59
-        $auction->delivery_date = $request->delivery_date??date('Y-m-d');
+        $auction->delivery_date = $request->delivery_date ?? date('Y-m-d');
         $auction->delivery_condition = $request->delivery_condition;
         $auction->delivery_region = $request->delivery_region;
         $auction->payment_condition = $request->payment_condition;
         $auction->special_terms = $request->special_terms;
-        if ($request->customer_warehouse_address) { $auction->customer_warehouse_address = $request->customer_warehouse_address; }
+        if ($request->customer_warehouse_address) {
+            $auction->customer_warehouse_address = $request->customer_warehouse_address;
+        }
         if (!$new) {
             $auction->customer_ogrn = $request->customer_ogrn;
             $auction->customer_bank_account = $request->customer_bank_account;
@@ -758,40 +755,40 @@ class AuctionController extends BaseController
 
         //21/07/22 sale steps
         if ($new && $request->type == 'sale') {
-        if (isset($request->start_price_step) && isset($request->start_price_percent) && isset($auction->id) && isset($request->start_price) & isset($request->over_date)) {  
-            $sale_steps = (int) $request->start_price_step;
-            $sale_percent = (int) $request->start_price_percent;
+            if (isset($request->start_price_step) && isset($request->start_price_percent) && isset($auction->id) && isset($request->start_price) & isset($request->over_date)) {
+                $sale_steps = (int) $request->start_price_step;
+                $sale_percent = (int) $request->start_price_percent;
 
-            $date_over_price = $request->over_date . ' 16:59:59';
-            $date_over_price = date('Y-m-d H:i:s', strtotime($date_over_price));
-            $date_now = date('Y-m-d H:i:s');
+                $date_over_price = $request->over_date . ' 16:59:59';
+                $date_over_price = date('Y-m-d H:i:s', strtotime($date_over_price));
+                $date_now = date('Y-m-d H:i:s');
 
-            $date_price_time = strtotime($date_over_price);
-            $date_now_time = strtotime($date_now);
-            $step_time = ($date_price_time - $date_now_time) / $sale_steps;
-            $step_time = intval($step_time);
-            $current_time = $date_now_time;
+                $date_price_time = strtotime($date_over_price);
+                $date_now_time = strtotime($date_now);
+                $step_time = ($date_price_time - $date_now_time) / $sale_steps;
+                $step_time = intval($step_time);
+                $current_time = $date_now_time;
 
-            $start_price = (int) $request->start_price;
-            $current_price = $start_price;
-            $step_price = ($sale_percent * $start_price) / 100;
-            $step_price = intval($step_price);
+                $start_price = (int) $request->start_price;
+                $current_price = $start_price;
+                $step_price = ($sale_percent * $start_price) / 100;
+                $step_price = intval($step_price);
 
-            for ($i = 0; $i < $sale_steps; $i++) {
-                $sale_rate = new SaleRate;
-                $sale_rate->auction_id = $auction->id;
-                $sale_rate->user_id = $user->id;
-                $sale_rate->price = $current_price;
-               /* $sale_rate->is_analog = 0;
+                for ($i = 0; $i < $sale_steps; $i++) {
+                    $sale_rate = new SaleRate;
+                    $sale_rate->auction_id = $auction->id;
+                    $sale_rate->user_id = $user->id;
+                    $sale_rate->price = $current_price;
+                    /* $sale_rate->is_analog = 0;
                 $sale_rate->analog_name = '';
                 $sale_rate->status = 1;*/
-                $sale_rate->date_price = date('Y-m-d H:i:s', $current_time);
-                $sale_rate->save();
-                $current_time = $current_time + $step_time;
-                $current_price = $current_price - $step_price;
+                    $sale_rate->date_price = date('Y-m-d H:i:s', $current_time);
+                    $sale_rate->save();
+                    $current_time = $current_time + $step_time;
+                    $current_price = $current_price - $step_price;
+                }
             }
-        } 
-        } 
+        }
 
 
 
@@ -823,7 +820,6 @@ class AuctionController extends BaseController
         //if (!$supplier->company_warehouse_address && $auction->supplier_warehouse_address) $supplier->company_warehouse_addressn = $auction->supplier_warehouse_address;
         if (!$supplier->company_warehouse_address && $auction->supplier_warehouse_address) $supplier->company_warehouse_address = $auction->supplier_warehouse_address;
         $supplier->save();
-
     }
 
     public function cancel(Request $request)
@@ -838,29 +834,29 @@ class AuctionController extends BaseController
             ->where('status', 1)
             ->orderBy('id', 'desc')
             ->where('deleted', '')
-            ->first();       
+            ->first();
 
 
         if (!empty($rate)) {
-            $supplier = User::find($rate->user_id);                 
-            $customer = User::find($auction->user_id);    
+            $supplier = User::find($rate->user_id);
+            $customer = User::find($auction->user_id);
             // ссылка на карточку 
             $link_card = self::getLinkCard($auction->type, $auction->id);
 
-            if ( self::enableNotification() ) {
-            // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
-            $mail = new \App\Mail\CancelAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-            $mail->to($customer->email);
-            Mail::send($mail);
-            self::firebase_push_send($customer, $auction->type, "Тендер отменен №".$auction->id);
-                    
-            // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
-            $mail = new \App\Mail\CancelAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-            $mail->to($supplier->email);
-            Mail::send($mail);
-            self::firebase_push_send($supplier, $auction->type, "Тендер отменен №".$auction->id);
+            if (self::enableNotification()) {
+                // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
+                $mail = new \App\Mail\CancelAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+                $mail->to($customer->email);
+                Mail::send($mail);
+                self::firebase_push_send($customer, $auction->type, "Тендер отменен №" . $auction->id);
+
+                // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
+                $mail = new \App\Mail\CancelAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+                $mail->to($supplier->email);
+                Mail::send($mail);
+                self::firebase_push_send($supplier, $auction->type, "Тендер отменен №" . $auction->id);
             }
-        }    
+        }
 
         return response(['status' => 1, 'text' => $text], 200);
     }
@@ -895,45 +891,44 @@ class AuctionController extends BaseController
     public function complete(Request $request)
     {
         $auction = Auction::find($request->id);
-       
+
         $complete_reason = $request->complete_reason;
 
         if (!empty($complete_reason) && !empty($auction)) {
 
             $rate = AuctionRate::where('auction_id', $auction->id)
-            ->where('status', 1)
-            ->orderBy('id', 'desc')
-            ->where('deleted', '')
-            ->first();
+                ->where('status', 1)
+                ->orderBy('id', 'desc')
+                ->where('deleted', '')
+                ->first();
 
             if (!empty($rate)) {
                 $auction->win_rate_id = $rate->id;
                 $auction->status = 2;
-               
+
                 $auction->complete_reason = $complete_reason;
                 $auction->save();
 
                 $customer = User::find($auction->user_id);
-                $supplier = User::find($rate->user_id);        
+                $supplier = User::find($rate->user_id);
 
                 // ссылка на карточку 
                 $link_card = self::getLinkCard($auction->type, $auction->id);
-                        
-                if ( self::enableNotification() ) {        
-                // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
-                $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-                $mail->to($supplier->email);
-                Mail::send($mail);
-                self::firebase_push_send($supplier, $auction->type, "Тендер завершен с вашей ставкой №".$auction->id);
+
+                if (self::enableNotification()) {
+                    // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
+                    $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+                    $mail->to($supplier->email);
+                    Mail::send($mail);
+                    self::firebase_push_send($supplier, $auction->type, "Тендер завершен с вашей ставкой №" . $auction->id);
                 }
-          
+
                 $text = 'Тендер завершен';
                 return response(['status' => 1, 'text' => $text], 200);
             }
         }
         $text = 'Ошибка';
         return response(['status' => 1, 'text' => $text], 200);
-        
     }
 
 
@@ -1053,41 +1048,40 @@ class AuctionController extends BaseController
             if ($current_date >= $current_over_date_five) {
                 $new_current_over_date = date('Y-m-d H:i:s', strtotime('+5 minutes', $current_over_date_time));
                 $auction->over_date = $new_current_over_date;
-               
             }
         }
 
         $auction->save();
 
         // ссылка на карточку 
-        $link_card = self::getLinkCard($auction->type, $auction->id);     
+        $link_card = self::getLinkCard($auction->type, $auction->id);
 
 
-        if ( self::enableNotification() ) {
-        // ОТПРАВКА НА ПОЧТУ УВЕДОМЛЕНИЯ
-        if($auction_user->notification_off === NULL) {
-        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-        $mail->to($auction_user->email);
-        Mail::send($mail);
-        self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере ".$auction->id);
-        }
-
-        if($rate_user->notification_off === NULL) {
-        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-        $mail->to($rate_user->email);
-        Mail::send($mail);
-        self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере ".$auction->id);
-        }
-
-        if (!empty($last_rate)) {            
-            $last_rate_user = User::find($last_rate->user_id);
-            if($last_rate_user->notification_off === NULL) {
-            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-            $mail->to($last_rate_user->email);
-            Mail::send($mail);
-            self::firebase_push_send($last_rate_user, $auction->type, "Новая ставка в тендере ".$auction->id);
+        if (self::enableNotification()) {
+            // ОТПРАВКА НА ПОЧТУ УВЕДОМЛЕНИЯ
+            if ($auction_user->notification_off === NULL) {
+                $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+                $mail->to($auction_user->email);
+                Mail::send($mail);
+                self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере " . $auction->id);
             }
-        }
+
+            if ($rate_user->notification_off === NULL) {
+                $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+                $mail->to($rate_user->email);
+                Mail::send($mail);
+                self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере " . $auction->id);
+            }
+
+            if (!empty($last_rate)) {
+                $last_rate_user = User::find($last_rate->user_id);
+                if ($last_rate_user->notification_off === NULL) {
+                    $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+                    $mail->to($last_rate_user->email);
+                    Mail::send($mail);
+                    self::firebase_push_send($last_rate_user, $auction->type, "Новая ставка в тендере " . $auction->id);
+                }
+            }
         }
 
 
@@ -1141,35 +1135,35 @@ class AuctionController extends BaseController
         // ссылка на карточку 
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
-        if ( self::enableNotification() ) {
-        // ОТПРАВКА НА ПОЧТУ УВЕДОМЛЕНИЯ
-        if($auction_user->notification_off === NULL) {
-        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-        $mail->to($auction_user->email);
-        Mail::send($mail);
-        self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере ".$auction->id);
-        }
-
-        if($rate_user->notification_off === NULL) {
-        $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-        $mail->to($rate_user->email);
-        Mail::send($mail);
-        self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере ".$auction->id);
-        }
-
-        if (!empty($last_rate)) {            
-            $last_rate_user = User::find($last_rate->user_id);
-            if($last_rate_user->notification_off === NULL) {
-            $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
-            $mail->to($last_rate_user->email);
-            Mail::send($mail);
-            self::firebase_push_send($last_rate_user, $auction->type,  "Новая ставка в тендере ".$auction->id);
+        if (self::enableNotification()) {
+            // ОТПРАВКА НА ПОЧТУ УВЕДОМЛЕНИЯ
+            if ($auction_user->notification_off === NULL) {
+                $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+                $mail->to($auction_user->email);
+                Mail::send($mail);
+                self::firebase_push_send($auction_user, $auction->type, "Новая ставка в тендере " . $auction->id);
             }
-        }
+
+            if ($rate_user->notification_off === NULL) {
+                $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+                $mail->to($rate_user->email);
+                Mail::send($mail);
+                self::firebase_push_send($rate_user, $auction->type, "Новая ставка в тендере " . $auction->id);
+            }
+
+            if (!empty($last_rate)) {
+                $last_rate_user = User::find($last_rate->user_id);
+                if ($last_rate_user->notification_off === NULL) {
+                    $mail = new \App\Mail\NewAuctionRate($auction, $rate->price, $last_rate_price, $link_card);
+                    $mail->to($last_rate_user->email);
+                    Mail::send($mail);
+                    self::firebase_push_send($last_rate_user, $auction->type,  "Новая ставка в тендере " . $auction->id);
+                }
+            }
         }
 
         $text = 'Ваша ставка успешно добавлена';
-    return response(['status' => 1, 'text' => $text], 200);
+        return response(['status' => 1, 'text' => $text], 200);
     }
 
 
@@ -1216,48 +1210,48 @@ class AuctionController extends BaseController
             $rate->status = 2;
             $rate->save();
 
-        self::update_auction_counter($rate,$auction);
-       
+            self::update_auction_counter($rate, $auction);
 
-        $auction->win_rate_id = $rate->id;
-        $auction->status = 2;
-        $auction->save();
 
-        $lose_rates = AuctionRate::where('auction_id', $auction->id)
-            ->where('status', 1)
-            ->where('deleted', '')
-            ->get();
+            $auction->win_rate_id = $rate->id;
+            $auction->status = 2;
+            $auction->save();
 
-        $customer = User::find($auction->user_id);
-        $supplier = User::find($rate->user_id);
+            $lose_rates = AuctionRate::where('auction_id', $auction->id)
+                ->where('status', 1)
+                ->where('deleted', '')
+                ->get();
 
-        // ссылка на карточку 
-        $link_card = self::getLinkCard($auction->type, $auction->id);
+            $customer = User::find($auction->user_id);
+            $supplier = User::find($rate->user_id);
 
-        if ( self::enableNotification() ) {
-        // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
-        $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-        $mail->to($customer->email);
-        Mail::send($mail);
-        self::firebase_push_send($customer, $auction->type, "Предложение было успешно подтверждено в тендере ".$auction->id);
+            // ссылка на карточку 
+            $link_card = self::getLinkCard($auction->type, $auction->id);
 
-        // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
-        $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-        $mail->to($supplier->email);
-        Mail::send($mail);
-        self::firebase_push_send($supplier, $auction->type, "Предложение было успешно подтверждено в тендере ".$auction->id);
+            if (self::enableNotification()) {
+                // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
+                $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+                $mail->to($customer->email);
+                Mail::send($mail);
+                self::firebase_push_send($customer, $auction->type, "Предложение было успешно подтверждено в тендере " . $auction->id);
 
-        foreach ($lose_rates as $lose_rate) {
-            $rate_user = User::find($lose_rate->user_id);
-            $mail = new \App\Mail\LoseAuction($auction, $lose_rate->price, $rate->price, $link_card);
-            $mail->to($rate_user->email);
-            Mail::send($mail);
+                // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
+                $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+                $mail->to($supplier->email);
+                Mail::send($mail);
+                self::firebase_push_send($supplier, $auction->type, "Предложение было успешно подтверждено в тендере " . $auction->id);
+
+                foreach ($lose_rates as $lose_rate) {
+                    $rate_user = User::find($lose_rate->user_id);
+                    $mail = new \App\Mail\LoseAuction($auction, $lose_rate->price, $rate->price, $link_card);
+                    $mail->to($rate_user->email);
+                    Mail::send($mail);
+                }
+            }
+
+            $text = 'Предложение было успешно подтверждено';
+            return response(['status' => 1, 'text' => $text], 200);
         }
-        }
-
-        $text = 'Предложение было успешно подтверждено';
-        return response(['status' => 1, 'text' => $text], 200);
-         }
     }
 
 
@@ -1268,14 +1262,14 @@ class AuctionController extends BaseController
 
         $start_price = 0;
 
-        if ($auction->type === 'sale') {        
+        if ($auction->type === 'sale') {
             $date_now = date('Y-m-d H:i:s');
-            $sale_rate_item = SaleRate::where('auction_id', $request->auction_id)->where('date_price', '<=',  $date_now)->orderBy('id','desc')->first();       
+            $sale_rate_item = SaleRate::where('auction_id', $request->auction_id)->where('date_price', '<=',  $date_now)->orderBy('id', 'desc')->first();
             if (!empty($sale_rate_item)) {
-                $start_price =  $sale_rate_item->price;                    
+                $start_price =  $sale_rate_item->price;
             } else {
                 $start_price = $auction->start_price;
-            }       
+            }
         }
 
         $rate = new AuctionRate;
@@ -1284,7 +1278,7 @@ class AuctionController extends BaseController
         $rate->price = $start_price;
         $rate->is_analog = 0;
         $rate->analog_name = '';
-        $rate->status = 2;               
+        $rate->status = 2;
         $rate->save();
 
         self::update_auction_counter($rate, $auction);
@@ -1306,25 +1300,25 @@ class AuctionController extends BaseController
         // ссылка на карточку 
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
-        if ( self::enableNotification() ) {
-        // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
-        $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-        $mail->to($customer->email);
-        Mail::send($mail);
-        self::firebase_push_send($customer, $auction->type, "Тендер ".$auction->id." был успешно завершен");
-
-        // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
-        $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
-        $mail->to($supplier->email);
-        Mail::send($mail);
-        self::firebase_push_send($supplier, $auction->type, "Тендер ".$auction->id." был успешно завершен");
-
-        foreach ($lose_rates as $lose_rate) {
-            $rate_user = User::find($lose_rate->user_id);
-            $mail = new \App\Mail\LoseAuction($auction, $lose_rate->price, $rate->price, $link_card);
-            $mail->to($rate_user->email);
+        if (self::enableNotification()) {
+            // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
+            $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+            $mail->to($customer->email);
             Mail::send($mail);
-        }
+            self::firebase_push_send($customer, $auction->type, "Тендер " . $auction->id . " был успешно завершен");
+
+            // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
+            $mail = new \App\Mail\CloseAuction($auction, $rate->price, $customer->company_name, $supplier->company_name, $link_card);
+            $mail->to($supplier->email);
+            Mail::send($mail);
+            self::firebase_push_send($supplier, $auction->type, "Тендер " . $auction->id . " был успешно завершен");
+
+            foreach ($lose_rates as $lose_rate) {
+                $rate_user = User::find($lose_rate->user_id);
+                $mail = new \App\Mail\LoseAuction($auction, $lose_rate->price, $rate->price, $link_card);
+                $mail->to($rate_user->email);
+                Mail::send($mail);
+            }
         }
 
         $text = 'Предложение было успешно подтверждено';
@@ -1333,17 +1327,16 @@ class AuctionController extends BaseController
 
 
     //171122 обновление счетчика на главной странице
-    public function update_auction_counter($rate, $auction) 
+    public function update_auction_counter($rate, $auction)
     {
         if (!empty($rate->price) && (!empty($auction->size))) {
             $id = 1;
-            $auction_counter = AuctionCounter::find($id);            
-            $rate_summ = intval($rate->price) * intval($auction->size);          
+            $auction_counter = AuctionCounter::find($id);
+            $rate_summ = intval($rate->price) * intval($auction->size);
             $auction_counter->counter = $auction_counter->counter + $rate_summ;
             $auction_counter->save();
         }
-        
-    } 
+    }
 
     public function delete_rate(Request $request)
     {
@@ -1360,7 +1353,7 @@ class AuctionController extends BaseController
         $now = date('l, d F Y');
         $auction = Auction::with('rates', 'win_rate', 'user')->where('id', $request->auction_id)->first();
 
-//		$auction->article = str_pad($auction->id, 6-mb_strlen($auction->id), '0', STR_PAD_LEFT);1
+        //		$auction->article = str_pad($auction->id, 6-mb_strlen($auction->id), '0', STR_PAD_LEFT);1
         $auction->article = sprintf("%05s", $auction->id);
 
         $pdf = PDF::loadView('pdf.auction_contract', ['auction' => $auction]);
@@ -1391,32 +1384,32 @@ class AuctionController extends BaseController
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
         if ($auction->supplier_confirm == 1 && $auction->customer_confirm == 1) {
-            if ( self::enableNotification() ) {
-            // ОТПРАВКА НА ПОЧТУ АДМИНИСТРАТОРАМ
-            $mail = new \App\Mail\ConfirmAuction($auction, $rate->price . ' ₽/' . $auction->unit, $customer->company_name, $supplier->company_name, $link_card, $request->type);
-            $mail->to('info@agtender.com');
-            Mail::send($mail);            
-            $type = 'all';
+            if (self::enableNotification()) {
+                // ОТПРАВКА НА ПОЧТУ АДМИНИСТРАТОРАМ
+                $mail = new \App\Mail\ConfirmAuction($auction, $rate->price . ' ₽/' . $auction->unit, $customer->company_name, $supplier->company_name, $link_card, $request->type);
+                $mail->to('info@agtender.com');
+                Mail::send($mail);
+                $type = 'all';
             }
         }
 
         if ($auction->supplier_confirm == 1) {
-            if ( self::enableNotification() ) {
-            // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
-            $mail = new \App\Mail\ConfirmAuction($auction, $rate->price . ' ₽/' . $auction->unit, $customer->company_name, $supplier->company_name, $link_card, $type);
-            $mail->to($customer->email);
-            Mail::send($mail);
-            self::firebase_push_send($customer, $auction->type, $text." в тендере ".$auction->id);
+            if (self::enableNotification()) {
+                // ОТПРАВКА НА ПОЧТУ КЛИЕНТУ
+                $mail = new \App\Mail\ConfirmAuction($auction, $rate->price . ' ₽/' . $auction->unit, $customer->company_name, $supplier->company_name, $link_card, $type);
+                $mail->to($customer->email);
+                Mail::send($mail);
+                self::firebase_push_send($customer, $auction->type, $text . " в тендере " . $auction->id);
             }
         }
 
         if ($auction->customer_confirm == 1) {
-            if ( self::enableNotification() ) {
-            // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
-            $mail = new \App\Mail\ConfirmAuction($auction, $rate->price . ' ₽/' . $auction->unit, $customer->company_name, $supplier->company_name, $link_card, $type);
-            $mail->to($supplier->email);
-            Mail::send($mail);
-            self::firebase_push_send($supplier, $auction->type, $text." в тендере ".$auction->id);
+            if (self::enableNotification()) {
+                // ОТПРАВКА НА ПОЧТУ ПРОДАВЦУ
+                $mail = new \App\Mail\ConfirmAuction($auction, $rate->price . ' ₽/' . $auction->unit, $customer->company_name, $supplier->company_name, $link_card, $type);
+                $mail->to($supplier->email);
+                Mail::send($mail);
+                self::firebase_push_send($supplier, $auction->type, $text . " в тендере " . $auction->id);
             }
         }
 
@@ -1427,7 +1420,7 @@ class AuctionController extends BaseController
     {
         $auction = Auction::find($request->id);
 
-//		return response([ 'status' => 1, 'text' => print_r($request->filenames[0], true) ], 200);
+        //		return response([ 'status' => 1, 'text' => print_r($request->filenames[0], true) ], 200);
 
         if (!empty($auction) && $request->filenames && $request->type) {
             if ($request->type == 'customer') $contract_files = $auction->customer_contract_files ? json_decode($auction->customer_contract_files) : [];
@@ -1443,7 +1436,7 @@ class AuctionController extends BaseController
             $yearfolder = substr($auction->over_date, 0, 4);
             $counter = 0;
             foreach ($request->filenames as $file) {
-//				return response([ 'status' => 1, 'text' => $file ], 200);
+                //				return response([ 'status' => 1, 'text' => $file ], 200);
 
                 $ext = strtolower($file->getClientOriginalExtension());
 
@@ -1497,7 +1490,7 @@ class AuctionController extends BaseController
         if (!empty($auction) && !empty($request->file) && $request->type && 1 == 2) {
             if ($request->type == 'customer') $contract_files = $auction->customer_contract_files ? json_decode($auction->customer_contract_files) : [];
             elseif ($request->type == 'supplier') $contract_files = $auction->supplier_contract_files ? json_decode($auction->supplier_contract_files) : [];
-//            return response([ 'status' => 1, 'text' => print_r($contract_files,true) ], 200);
+            //            return response([ 'status' => 1, 'text' => print_r($contract_files,true) ], 200);
 
 
             $filenumber = 1;
@@ -1531,7 +1524,7 @@ class AuctionController extends BaseController
     {
         $auction = Auction::find($request->id);
 
-//		return response([ 'status' => 1, 'text' => print_r($request->filenames[0], true) ], 200);
+        //		return response([ 'status' => 1, 'text' => print_r($request->filenames[0], true) ], 200);
 
         if (!empty($auction) && $request->deletefile) {
             $found = false;
@@ -1576,14 +1569,15 @@ class AuctionController extends BaseController
         $drugs = DB::table('auction_drug_list')->orderBy('title')->groupBy('title')->get();
         foreach ($drugs as $drug) {
             $analogs = !empty($drug->analogs) ? $drug->analogs : NULL;
-            array_push($options, ['id' => trim($drug->id),'title' => trim($drug->title), 'active_material' => trim($drug->active_material),
+            array_push($options, [
+                'id' => trim($drug->id), 'title' => trim($drug->title), 'active_material' => trim($drug->active_material),
                 'analogs' => $analogs
             ]);
         }
-        
+
         return response($options, 200);
     }
-    
+
     public function get_title_options2(Request $request)
     {
         $options = array();
@@ -1593,10 +1587,10 @@ class AuctionController extends BaseController
         $active_material = $auction != null ? $auction->active_material : null;
         $drugs = DB::table('auction_drug_list')->orderBy('title')->groupBy('title')->get();
         foreach ($drugs as $drug) {
-            if($drug->active_material == $active_material)
+            if ($drug->active_material == $active_material)
                 array_push($options, ['title' => trim($drug->title), 'active_material' => trim($drug->active_material)]);
         }
-        
+
         return response($options, 200);
     }
 
@@ -1609,7 +1603,7 @@ class AuctionController extends BaseController
         foreach ($drugs as $drug) {
             $analogs = !empty($drug->analogs) ? $drug->analogs : NULL;
             if (!in_array($drug->active_material, $options)) {
-                array_push($options,  trim($drug->active_material) );
+                array_push($options,  trim($drug->active_material));
             }
         }
         return response($options, 200);
@@ -1620,33 +1614,34 @@ class AuctionController extends BaseController
     public function get_analog_title_options(Request $request)
     {
         $options = array();
-        if (!empty($request->tender_id)) {           
+        if (!empty($request->tender_id)) {
             $auction = Auction::find($request->tender_id);
-            if (!empty($auction)) {   
+            if (!empty($auction)) {
                 $auction_title = $auction->title;
 
                 // исключенные аналоги
                 $auction_exclude_array = (!empty($auction->exclude_analogs)) ? json_decode($auction->exclude_analogs) : [];
-                
+
                 $drug_array = array();
                 $all_drugs = DB::table('auction_drug_list')->orderBy('title')->groupBy('title')->get();
 
                 foreach ($all_drugs as $drug) {
                     if ($drug->title === $auction_title) {
-                        $drug_array = (!empty($drug->analogs)) ? explode(";",$drug->analogs) : [];
+                        $drug_array = (!empty($drug->analogs)) ? explode(";", $drug->analogs) : [];
                     }
                 }
 
-                 //если аналоги веществ есть
+                //если аналоги веществ есть
                 if (!empty($drug_array)) {
                     $options = [];
-                    foreach ($drug_array as $drug_item) {     
+                    foreach ($drug_array as $drug_item) {
                         foreach ($all_drugs as $drug) {
                             if ($drug->title === $drug_item) {
-                               if (!in_array($drug_item, $auction_exclude_array, true)) { 
-                                    array_push($options, ['id' => trim($drug->id),'title' => trim($drug->title),
-                                    'active_material' => trim($drug->active_material)   
-                                    ]);        
+                                if (!in_array($drug_item, $auction_exclude_array, true)) {
+                                    array_push($options, [
+                                        'id' => trim($drug->id), 'title' => trim($drug->title),
+                                        'active_material' => trim($drug->active_material)
+                                    ]);
                                 }
                             }
                         }
@@ -1656,13 +1651,13 @@ class AuctionController extends BaseController
                 //если аналогов веществ нет вывод всех
                 if (empty($drug_array)) {
                     $options = [];
-                    foreach ($all_drugs as $drug) {                   
-                        array_push($options, ['id' => trim($drug->id),'title' => trim($drug->title), 'active_material' => trim($drug->active_material)                       
+                    foreach ($all_drugs as $drug) {
+                        array_push($options, [
+                            'id' => trim($drug->id), 'title' => trim($drug->title), 'active_material' => trim($drug->active_material)
                         ]);
                     }
-                }    
-               
-        }
+                }
+            }
         }
         return response($options, 200);
     }
@@ -1685,40 +1680,40 @@ class AuctionController extends BaseController
 
 
 
-    public function firebase_test() {
+    public function firebase_test()
+    {
 
         $firebase_title = "НАТС Тендеры";
         $firebase_text = "НАТС Тендеры тест";
-      
+
         $firebase_token = "d5fZgBIWgEaWgdt_Xn6Jt8:APA91bFkAFCLDTp-GsXmkWxQn0tNppThts2rMe6FCoEhDNk3hS17S7ieEeoYR4B8nCdo4D1LH696suxPIdLYakUlmKrmyCTlAFJooysqvZRk-hzKemqjUm589ROevKjPbEQHDM8xvjY0";
 
-        if (!empty($firebase_token)) {          
-        $firebase_key = "AAAA8YW6Ths:APA91bHMAQYsCeehzLtkfrPznUKL1Cqdt38zTtUutwesuJXQTTmxvh7V6n1H156kTBkAbT3K8h-frGVNEA0WrKcJKioh8BMHrrVV9ODkXS110r7iN0GwY6MNrq6PT1lWi-pXR6Y7MfNA";
-        $firebase_url = 'https://fcm.googleapis.com/fcm/send';
-        $fields = array (
-            'to' => $firebase_token,
-            'notification' => array (
-                "title" =>  $firebase_title,
-                "body" => $firebase_text,
-                "badge" => 1,
-            ),
-        );
-        $fields = json_encode($fields);
-        $headers = array (
-            'Authorization: key=' . $firebase_key,
-            'Content-Type: application/json'
-        );
-        $ch = curl_init ();
-        curl_setopt ( $ch, CURLOPT_URL, $firebase_url );
-        curl_setopt ( $ch, CURLOPT_POST, true );
-        curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields );
-        $result = curl_exec ( $ch );
-        echo $result;
-        curl_close ( $ch );
+        if (!empty($firebase_token)) {
+            $firebase_key = "AAAA8YW6Ths:APA91bHMAQYsCeehzLtkfrPznUKL1Cqdt38zTtUutwesuJXQTTmxvh7V6n1H156kTBkAbT3K8h-frGVNEA0WrKcJKioh8BMHrrVV9ODkXS110r7iN0GwY6MNrq6PT1lWi-pXR6Y7MfNA";
+            $firebase_url = 'https://fcm.googleapis.com/fcm/send';
+            $fields = array(
+                'to' => $firebase_token,
+                'notification' => array(
+                    "title" =>  $firebase_title,
+                    "body" => $firebase_text,
+                    "badge" => 1,
+                ),
+            );
+            $fields = json_encode($fields);
+            $headers = array(
+                'Authorization: key=' . $firebase_key,
+                'Content-Type: application/json'
+            );
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $firebase_url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+            $result = curl_exec($ch);
+            echo $result;
+            curl_close($ch);
         }
-        
     }
 
 
@@ -1734,7 +1729,7 @@ class AuctionController extends BaseController
     {
         //$user = Auth::user();
 
-        $type="drop";            
+        $type = "drop";
 
         $auctions = Auction::where('type', $type);
         $auctions->where('status', 2);
@@ -1757,7 +1752,7 @@ class AuctionController extends BaseController
         $auctions = $auctions->get();
 
         foreach ($auctions as $auction_key => $auction) {
-            
+
             $now = time();
             $date = strtotime($auction->over_date);
             $datediff = $date - $now;
@@ -1771,29 +1766,24 @@ class AuctionController extends BaseController
 
             if ($auction->type === 'rise') {
                 $rate = $auction->price();
-            } 
-            elseif  ($auction->type === 'sale') { // распродажи
+            } elseif ($auction->type === 'sale') { // распродажи
                 $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first();
+            } else {
+                $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first(); // 050522
             }
-            else {
-               $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first(); // 050522
-            }   
 
             if (!empty($rate)) {
                 $auction->rate = $rate;
-            }      
+            }
 
             $auction->article = sprintf("%05s", $auction->id);
             $auction->created_formated = date('d.m.Y H:i', strtotime($auction->created_at));
             $auction->date_formated = date('d.m.Y', strtotime($auction->over_date));
             $auction->over_date = date('Y-m-d', strtotime($auction->over_date));
             $auction->delivery_date_formated = date('d.m.Y', strtotime($auction->delivery_date));
-
         }
 
         return response(['status' => 1, 'auctions' => $auctions], 200);
-
-
     }
 
 
@@ -1802,7 +1792,7 @@ class AuctionController extends BaseController
 
     //добавить в мои тендеры
     public function add_my_tender(Request $request)
-    {      
+    {
         $auction_id = $request->auction_id;
         $user_id = $request->user_id;
         if (($auction_id > 0) && ($user_id > 0)) {
@@ -1827,10 +1817,10 @@ class AuctionController extends BaseController
     public function get_user_list(Request $request)
     {
         $user = Auth::user();
-        
+
         $author_user_id = $request->author_user_id;
 
-        $type="drop";            
+        $type = "drop";
 
         $auctions = Auction::where('type', $type);
         $auctions->where('user_id', $author_user_id);
@@ -1838,8 +1828,8 @@ class AuctionController extends BaseController
         $auctions->where('status', 1);
 
         // активные аукционы
-        $now = date('Y-m-d H:i:s');       
-        $auctions->where('over_date', '>=', $now);        
+        $now = date('Y-m-d H:i:s');
+        $auctions->where('over_date', '>=', $now);
 
 
 
@@ -1856,56 +1846,56 @@ class AuctionController extends BaseController
         }
 
 
-            if (!empty($request->excel)) {
-                if ($user->role_id != 1000) return response(['status' => 0, 'message' => 'Request denied - admin rights required'], 200);
+        if (!empty($request->excel)) {
+            if ($user->role_id != 1000) return response(['status' => 0, 'message' => 'Request denied - admin rights required'], 200);
 
-                $auctions->select(
-                    'id',
-                    'user_id',
-                    'title',
-                    'active_material',
-                    'is_analog',
-                    'size',
-                    'unit',
-                    'over_date',
-                    'delivery_date',
-                    'delivery_condition',
-                    'delivery_region',
-                    'payment_condition',
-                    'special_terms',
-                    'status',
-                    'customer_confirm',
-                    'supplier_confirm',
-                    'win_rate_id',
-                    'cancel_reason',
-                    'created_at',
-                    'updated_at'
-                );
-      
-                $time = time();
+            $auctions->select(
+                'id',
+                'user_id',
+                'title',
+                'active_material',
+                'is_analog',
+                'size',
+                'unit',
+                'over_date',
+                'delivery_date',
+                'delivery_condition',
+                'delivery_region',
+                'payment_condition',
+                'special_terms',
+                'status',
+                'customer_confirm',
+                'supplier_confirm',
+                'win_rate_id',
+                'cancel_reason',
+                'created_at',
+                'updated_at'
+            );
 
-                $files = Storage::files('public/excel');
-                foreach ($files as $file) {
-                    $filedate = explode('.', $file);
-                    $filedate = array_shift($filedate);
-                    $filedate = explode('-', $filedate);
-                    $filedate = array_pop($filedate);
-                    if (!preg_match("/^[0-9]{14}$/", $filedate)) continue;
-                    if ($filedate < date('YmdHis', $time - 60)) {
-                        Storage::delete('public/excel/' . basename($file));
-                    }
+            $time = time();
+
+            $files = Storage::files('public/excel');
+            foreach ($files as $file) {
+                $filedate = explode('.', $file);
+                $filedate = array_shift($filedate);
+                $filedate = explode('-', $filedate);
+                $filedate = array_pop($filedate);
+                if (!preg_match("/^[0-9]{14}$/", $filedate)) continue;
+                if ($filedate < date('YmdHis', $time - 60)) {
+                    Storage::delete('public/excel/' . basename($file));
                 }
-
-                Excel::store(new TendersExport($auctions), 'public/excel/НАТС_Тендеры-' . date('YmdHis', $time) . '.xls');
-                return response(['status' => 1, 'link' => '/storage/excel/НАТС_Тендеры-' . date('YmdHis', $time) . '.xls'], 200);
             }
-        
+
+            Excel::store(new TendersExport($auctions), 'public/excel/НАТС_Тендеры-' . date('YmdHis', $time) . '.xls');
+            return response(['status' => 1, 'link' => '/storage/excel/НАТС_Тендеры-' . date('YmdHis', $time) . '.xls'], 200);
+        }
+
 
 
         $auctions = $auctions->get();
 
         foreach ($auctions as $auction_key => $auction) {
-            
+
             $now = time();
             $date = strtotime($auction->over_date);
             $datediff = $date - $now;
@@ -1919,28 +1909,24 @@ class AuctionController extends BaseController
 
             if ($auction->type === 'rise') {
                 $rate = $auction->price();
-            } 
-            elseif  ($auction->type === 'sale') { // распродажи
+            } elseif ($auction->type === 'sale') { // распродажи
                 $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first();
+            } else {
+                $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first(); // 050522
             }
-            else {
-               $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first(); // 050522
-            }   
 
             if (!empty($rate)) {
                 $auction->rate = $rate;
-            }      
+            }
 
             $auction->article = sprintf("%05s", $auction->id);
             $auction->created_formated = date('d.m.Y H:i', strtotime($auction->created_at));
             $auction->date_formated = date('d.m.Y', strtotime($auction->over_date));
             $auction->over_date = date('Y-m-d', strtotime($auction->over_date));
             $auction->delivery_date_formated = date('d.m.Y', strtotime($auction->delivery_date));
-
         }
 
         return response(['status' => 1, 'auctions' => $auctions], 200);
-
     }
 
 
@@ -1991,22 +1977,18 @@ class AuctionController extends BaseController
             }
 
             return response(['status' => 1, 'text' => $text], 200);
-
         }
-
     }
 
 
 
 
-     //130223 скачивание вложенных файлов
+    //130223 скачивание вложенных файлов
     public function get_doc_file(Request $request)
     {
         if (!empty($request->doc_file)) {
             $doc_file = $request->doc_file;
-            return Storage::download('public/docs/'.$doc_file);
+            return Storage::download('public/docs/' . $doc_file);
         }
     }
-    
-
 }
