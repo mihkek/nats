@@ -51,7 +51,7 @@ class IndexController extends Controller
         foreach ($tenders as $auction) {
             $now = time();
             $date = strtotime($auction->over_date);
-            $datediff = $date - $now; 
+            $datediff = $date - $now;
 
             $auction->title = ($auction->title == '') ? '-' : $auction->title;
             $slug = $auction->title . ' ' . $auction->active_material;
@@ -179,7 +179,7 @@ class IndexController extends Controller
             'tenders' => $res_tenders,
             'sales' => $res_sales,
 
-            //'counters' => ["userscount" => $userscount, "tenderscount" => $tenderscount, "summcount" => $summcount],     
+            //'counters' => ["userscount" => $userscount, "tenderscount" => $tenderscount, "summcount" => $summcount],
         ];
         return view('index.index', $data);
     }
@@ -632,11 +632,20 @@ class IndexController extends Controller
             $auction->over_date = date('Y-m-d', strtotime($auction->over_date));
             $auction->delivery_date_formated = date('d.m.Y', strtotime($auction->delivery_date));
 
+            $rate = AuctionRate::where('auction_id', $auction->id)
+                ->whereIn('status', [1, 2])
+                ->where('deleted', '')
+                ->orderBy('price')
+                ->first();
 
-            $rate = AuctionRate::where('auction_id', $auction->id)->whereIn('status', [1, 2])->where('deleted', '')->orderBy('price')->first();
-
-
-            return view('page.tender', ['auction' => $auction, 'auction_id' => $auction_id, 'auction_title' => $auction_title, 'auction_full_title' => $auction_full_title, 'rate' => $rate]);
+            return view('page.tender', [
+                'auction' => $auction,
+                'auction_id' => $auction_id,
+                'auction_title' => $auction_title,
+                'auction_full_title' => $auction_full_title,
+                'rate' => $rate
+                ]
+            );
         }
     }
 
@@ -680,7 +689,7 @@ class IndexController extends Controller
         //data = str_getcsv($contents, ":");
 
         $array_contents = explode("\n", $contents);
-        //$cut_array_contents = array_slice($array_contents, 1000, 1000); 
+        //$cut_array_contents = array_slice($array_contents, 1000, 1000);
 
         foreach ($array_contents as $line) {
             $row = str_getcsv($line, "|");
