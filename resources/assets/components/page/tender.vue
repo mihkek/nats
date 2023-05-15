@@ -8,7 +8,7 @@
       <v-container fluid grid-list-lg>
         <v-layout row wrap>
           <v-flex xs12>
-          
+
 <v-breadcrumbs
       :items="nav_items"
       large
@@ -26,7 +26,7 @@
             </template>
           </span>
     </span>
-  
+
       <v-spacer></v-spacer>
       <!--<v-btn color="grey darken-3" icon small text @click.stop="$emit('close')" absolute right top>
         <v-icon small>mdi-close</v-icon>
@@ -70,7 +70,7 @@
         </v-layout>
         <v-divider class="mx-2 my-0"></v-divider>
         <v-layout row wrap>
-        
+
           <v-flex md8>
             <v-list-item class="px-2">
               <v-list-item-content>
@@ -145,17 +145,17 @@
   </v-card>
 
           </v-flex>
-         
+
         </v-layout>
       </v-container>
     </v-main>
-    
+
     <!-- Подвал -->
     <footer_bar :user_id="user_id" />
   </v-app>
 </template>
 
-<script> 
+<script>
 import app_bar from '../index/components/app_bar'
 import footer_bar from '../index/components/footer_bar'
 import payment_conditions_data from '../constants/payment_conditions_data.js'
@@ -166,8 +166,8 @@ export default {
     return {
       loading: false,
       delivery_conditions: delivery_conditions_data.delivery_conditions_data,
-      payment_conditions: payment_conditions_data.payment_conditions_data,     
-      item: null, 
+      payment_conditions: payment_conditions_data.payment_conditions_data,
+      item: null,
     }
   },
   mounted() {

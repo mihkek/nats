@@ -183,7 +183,12 @@ $payment = $auction->payment_condition;
 									<div class="flex md8">
 										<div class="v-card__actions pt-6">
 											<div class="spacer"></div>
-											<a href="/admin/tender/now/card/{{ $auction->id }}" class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--large success" rel="nofollow"><span class="v-btn__content">Предложить цену</span></a>
+
+											@if($auction->type === 'drop')
+    											<a href="/admin/tender/now/card/{{ $auction->id }}" class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--large success" rel="nofollow"><span class="v-btn__content">Предложить цену</span></a>
+											@elseif($auction->type === 'dropdv')
+    											<a href="/admin/tenderdv/now/card/{{ $auction->id }}" class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--large success" rel="nofollow"><span class="v-btn__content">Предложить цену</span></a>
+											@endif
 										</div>
 									</div>
 								</div>
