@@ -418,7 +418,9 @@ class AuctionController extends BaseController
                             array_push($auctions_id, $supplier_rate->auction_id);
                         }
                         $uniq_auctions_id = array_unique($auctions_id);
-                        $auctions->whereIn('id', $uniq_auctions_id);
+                        $auctions->whereIn('id', $uniq_auctions_id)->where('user_id', $user->id);
+                    } else {
+                        $auctions->where('user_id', $user->id);
                     }
                 }
 
