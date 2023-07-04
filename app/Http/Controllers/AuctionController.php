@@ -424,7 +424,7 @@ class AuctionController extends BaseController
                     }
                 }
 
-                // мои аукционы поставщиков 
+                // мои аукционы поставщиков
                 if ($request->own == true && $request->type === 'rise') {
                     if ($user->role_id == 101) {
                         $auctions->where('user_id', $user->id);
@@ -441,7 +441,7 @@ class AuctionController extends BaseController
                 }
 
 
-                // мои распродажи 
+                // мои распродажи
                 if ($request->own == true && $request->type === 'sale') {
                     if ($user->role_id == 101) {
                         $auctions->where('user_id', $user->id);
@@ -723,9 +723,9 @@ class AuctionController extends BaseController
         $auction->exclude_analogs = (!empty($request->exclude_analogs)) ? json_encode($request->exclude_analogs, true) : NULL;
 
 
+        $dateWithoutTime = substr($request->over_date, 0, 10);
 
-
-        $auction->over_date = $request->over_date . ' 17:00:00'; // 16:59:59
+        $auction->over_date = $dateWithoutTime . ' 17:00:00'; // 16:59:59
         $auction->delivery_date = $request->delivery_date ?? date('Y-m-d');
         $auction->delivery_condition = $request->delivery_condition;
         $auction->delivery_region = $request->delivery_region;
@@ -842,7 +842,7 @@ class AuctionController extends BaseController
         if (!empty($rate)) {
             $supplier = User::find($rate->user_id);
             $customer = User::find($auction->user_id);
-            // ссылка на карточку 
+            // ссылка на карточку
             $link_card = self::getLinkCard($auction->type, $auction->id);
 
             if (self::enableNotification()) {
@@ -914,7 +914,7 @@ class AuctionController extends BaseController
                 $customer = User::find($auction->user_id);
                 $supplier = User::find($rate->user_id);
 
-                // ссылка на карточку 
+                // ссылка на карточку
                 $link_card = self::getLinkCard($auction->type, $auction->id);
 
                 if (self::enableNotification()) {
@@ -1055,7 +1055,7 @@ class AuctionController extends BaseController
 
         $auction->save();
 
-        // ссылка на карточку 
+        // ссылка на карточку
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
 
@@ -1134,7 +1134,7 @@ class AuctionController extends BaseController
             }
         }
 
-        // ссылка на карточку 
+        // ссылка на карточку
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
         if (self::enableNotification()) {
@@ -1227,7 +1227,7 @@ class AuctionController extends BaseController
             $customer = User::find($auction->user_id);
             $supplier = User::find($rate->user_id);
 
-            // ссылка на карточку 
+            // ссылка на карточку
             $link_card = self::getLinkCard($auction->type, $auction->id);
 
             if (self::enableNotification()) {
@@ -1299,7 +1299,7 @@ class AuctionController extends BaseController
         $customer = User::find($auction->user_id);
         $supplier = User::find($rate->user_id);
 
-        // ссылка на карточку 
+        // ссылка на карточку
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
         if (self::enableNotification()) {
@@ -1382,7 +1382,7 @@ class AuctionController extends BaseController
 
         $type = $request->type;
 
-        // ссылка на карточку 
+        // ссылка на карточку
         $link_card = self::getLinkCard($auction->type, $auction->id);
 
         if ($auction->supplier_confirm == 1 && $auction->customer_confirm == 1) {
